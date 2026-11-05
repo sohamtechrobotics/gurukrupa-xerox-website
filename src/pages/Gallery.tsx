@@ -1,109 +1,158 @@
 
+import { useState } from "react";
 import {
-  Image,
+  Camera,
+  Image as ImageIcon,
   Printer,
-  FileText,
-  Building2,
-  Camera
+  Store,
+  BriefcaseBusiness
 } from "lucide-react";
 
-const galleryCategories = [
+const categories = [
+  "All",
+  "Shop Photos",
+  "Printing",
+  "Our Work",
+  "Moments"
+];
+
+const galleryItems = [
   {
-    icon: Building2,
+    id: 1,
     title: "Our Shop",
-    description:
-      "A look inside Gurukrupa Xerox And Soham Multiservices.",
-    label: "SHOP PHOTOS",
-    className: "gallery-shop"
+    category: "Shop Photos",
+    description: "A look inside Gurukrupa Xerox."
   },
   {
-    icon: Printer,
-    title: "Printing Facilities",
-    description:
-      "Our printing and photocopying facilities.",
-    label: "PRINTING",
-    className: "gallery-printing"
+    id: 2,
+    title: "Printing Services",
+    category: "Printing",
+    description: "Everyday printing and photocopying."
   },
   {
-    icon: FileText,
-    title: "Our Services",
-    description:
-      "A glimpse of the documentation and services we provide.",
-    label: "OUR WORK",
-    className: "gallery-services"
+    id: 3,
+    title: "Document Services",
+    category: "Our Work",
+    description: "Documentation and online service assistance."
   },
   {
-    icon: Camera,
-    title: "Customer Moments",
-    description:
-      "Special moments and experiences from our business.",
-    label: "MOMENTS",
-    className: "gallery-moments"
+    id: 4,
+    title: "Customer Service",
+    category: "Moments",
+    description: "Helping customers with their requirements."
+  },
+  {
+    id: 5,
+    title: "Colour Printing",
+    category: "Printing",
+    description: "Colour document printing services."
+  },
+  {
+    id: 6,
+    title: "Business Services",
+    category: "Our Work",
+    description: "Business and data-related assistance."
   }
 ];
 
 function Gallery() {
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const filteredItems =
+    activeCategory === "All"
+      ? galleryItems
+      : galleryItems.filter(
+          (item) => item.category === activeCategory
+        );
+
   return (
     <main className="page-container">
       <section className="page-hero">
-        <span className="eyebrow">OUR WORK & ENVIRONMENT</span>
-        <h1>A Closer Look at Our World.</h1>
+        <span className="eyebrow">OUR GALLERY</span>
+        <h1>A Glimpse of What We Do</h1>
         <p>
-          Explore our workplace, printing facilities
-          and the services we provide.
+          Explore our shop, printing services and the different
+          ways we assist our customers.
         </p>
       </section>
 
       <section className="section gallery-section">
-        <div className="section-heading">
-          <span className="eyebrow">OUR GALLERY</span>
-          <h2>Stories through pictures.</h2>
+        <div className="gallery-intro">
+          <div>
+            <span className="eyebrow">EXPLORE OUR WORK</span>
+            <h2>Our Work & Services</h2>
+          </div>
           <p>
-            This gallery will feature photographs of
-            our shop, equipment, services and business
-            activities.
+            Browse the categories to explore different aspects
+            of our business.
           </p>
         </div>
 
-        <div className="gallery-grid">
-          {galleryCategories.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <article
-                className={`gallery-card ${item.className}`}
-                key={item.title}
-              >
-                <div className="gallery-placeholder">
-                  <Icon size={42} strokeWidth={1.4} />
-                  <span>
-                    <Image size={15} />
-                    Photo Coming Soon
-                  </span>
-                </div>
-
-                <div className="gallery-card-content">
-                  <span className="eyebrow">
-                    {item.label}
-                  </span>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                </div>
-              </article>
-            );
-          })}
+        <div className="gallery-filters">
+          {categories.map((category) => (
+            <button
+              type="button"
+              key={category}
+              className={
+                activeCategory === category
+                  ? "gallery-filter active"
+                  : "gallery-filter"
+              }
+              onClick={() => setActiveCategory(category)}
+              aria-pressed={activeCategory === category}
+            >
+              {category}
+            </button>
+          ))}
         </div>
+
+        <div className="gallery-grid">
+          {filteredItems.map((item) => (
+            <article className="gallery-card" key={item.id}>
+              <div className="gallery-placeholder">
+                <div className="gallery-placeholder-icon">
+                  {item.category === "Shop Photos" ? (
+                    <Store size={38} />
+                  ) : item.category === "Printing" ? (
+                    <Printer size={38} />
+                  ) : item.category === "Our Work" ? (
+                    <BriefcaseBusiness size={38} />
+                  ) : (
+                    <Camera size={38} />
+                  )}
+                </div>
+
+                <span>PHOTO COMING SOON</span>
+              </div>
+
+              <div className="gallery-card-content">
+                <span className="gallery-category">
+                  {item.category}
+                </span>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {filteredItems.length === 0 && (
+          <div className="gallery-empty">
+            <ImageIcon size={30} />
+            <p>No gallery items found.</p>
+          </div>
+        )}
       </section>
 
-      <section className="contact-section">
-        <span className="eyebrow">COME VISIT US</span>
-        <h2>See our services in person.</h2>
+      <section className="contact-cta">
+        <span className="eyebrow">STAY CONNECTED</span>
+        <h2>Want to Know More About Our Services?</h2>
         <p>
-          Visit our shop at Plot No. 48, Balaji Nagar,
-          New Bhokardan, Maharashtra – 431114.
+          Contact us for information, enquiries and assistance.
         </p>
-        <a href="tel:7745062299" className="print-button">
-          Contact Us
+
+        <a href="/gurukrupa-xerox-website/#/contact" className="primary-button">
+          Get in Touch
         </a>
       </section>
     </main>
