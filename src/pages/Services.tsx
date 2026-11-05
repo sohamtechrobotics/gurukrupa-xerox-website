@@ -6,9 +6,7 @@ import {
   Calculator,
   BriefcaseBusiness,
   ScanLine,
-  FileText,
-  ClipboardList,
-  Database
+  FileText
 } from "lucide-react";
 
 const services = [
