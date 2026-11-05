@@ -5,87 +5,78 @@ import {
   HelpCircle,
   Printer,
   CreditCard,
-  Package,
-  FileText
+  FileText,
+  PackageSearch,
+  MessageCircle
 } from "lucide-react";
 
 const faqs = [
   {
-    category: "Printing",
+    category: "Printing Services",
     icon: Printer,
     questions: [
       {
-        question: "What file formats will be accepted?",
+        question: "What printing services do you offer?",
         answer:
-          "The planned system will support PDF, JPG, PNG and common Office documents such as DOCX, XLSX and PPTX."
+          "We offer black and white printing, colour printing, photocopying, document printing and scanning services."
       },
       {
-        question: "Can I print documents on both sides?",
+        question: "Can I submit documents online for printing?",
         answer:
-          "Yes. Both single-sided and double-sided printing are planned. Double-sided printing will count as one physical sheet."
+          "An online printing service is being planned. It will allow customers to upload documents, review printing details and arrange shop pickup."
       },
       {
-        question: "Can I choose black and white or colour printing?",
+        question: "How is double-sided printing charged?",
         answer:
-          "Yes. You will be able to select black and white or colour printing while configuring your order."
+          "Our planned pricing is based on physical sheets. A double-sided sheet counts as one physical sheet."
       }
     ]
   },
   {
-    category: "Orders & Pickup",
-    icon: Package,
+    category: "Online Orders",
+    icon: PackageSearch,
     questions: [
-      {
-        question: "How will I collect my printing order?",
-        answer:
-          "Online printing orders will be collected from Gurukrupa Xerox And Soham Multiservices at New Bhokardan."
-      },
       {
         question: "How can I track my order?",
         answer:
-          "Once order tracking is activated, you will be able to check your order using your order reference and registered mobile number."
+          "Use the Track Order page to enter your order reference and registered mobile number. Live tracking will be connected when the online order system is launched."
       },
       {
-        question: "Will I receive an order confirmation?",
+        question: "How will I know when my order is ready?",
         answer:
-          "The planned system will confirm orders after document validation and successful payment verification."
+          "Order-ready notifications through WhatsApp and website tracking are planned for the online printing system."
       }
     ]
   },
   {
-    category: "Payments & Pricing",
+    category: "Payments",
     icon: CreditCard,
     questions: [
       {
-        question: "What are the planned printing rates?",
+        question: "Which online payment methods are accepted?",
         answer:
-          "Black and white single-sided: ₹3 per sheet. Black and white double-sided: ₹2 per sheet. Colour printing: ₹10 per sheet."
+          "Online payment gateway integration is planned. Available payment methods will be announced when the ordering system launches."
       },
       {
-        question: "Is there an online order handling charge?",
+        question: "When will my online order be confirmed?",
         answer:
-          "The planned charge is ₹3 once per black and white order or ₹5 once per colour order. These charges are not cumulative."
-      },
-      {
-        question: "When will I pay?",
-        answer:
-          "The planned online process allows you to review your converted document and estimated price before making payment."
+          "The planned system will confirm an order after document validation and successful payment verification."
       }
     ]
   },
   {
-    category: "Documents & Support",
+    category: "Files & Documents",
     icon: FileText,
     questions: [
       {
-        question: "How long will uploaded files be retained?",
+        question: "Which file formats will be supported?",
         answer:
-          "The planned retention period is seven days after collection or cancellation, subject to any required holds."
+          "The planned system is intended to support PDF, JPG, PNG and common Office document formats such as DOCX, XLSX and PPTX."
       },
       {
-        question: "How can I ask for help?",
+        question: "How long will uploaded files be retained?",
         answer:
-          "You can contact our team by calling 7745062299 or sending an enquiry through WhatsApp."
+          "The planned retention period is seven days after collection or cancellation, subject to any necessary legal or operational holds."
       }
     ]
   }
@@ -94,53 +85,57 @@ const faqs = [
 function Help() {
   const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
 
+  const toggleQuestion = (id: string) => {
+    setActiveQuestion((current) => current === id ? null : id);
+  };
+
   return (
     <main className="page-container">
       <section className="page-hero">
         <span className="eyebrow">HELP & SUPPORT</span>
         <h1>How Can We Help You?</h1>
         <p>
-          Find answers to common questions about our
-          services, printing process, orders and pricing.
+          Find answers to common questions about our services
+          and planned online printing system.
         </p>
       </section>
 
-      <section className="section help-section">
+      <section className="section faq-section">
         <div className="section-heading">
           <span className="eyebrow">FREQUENTLY ASKED QUESTIONS</span>
-          <h2>Answers to your questions.</h2>
+          <h2>Find Your Answers</h2>
+          <p>
+            Browse the topics below to find helpful information.
+          </p>
         </div>
 
-        {faqs.map((group) => {
+        {faqs.map((group, groupIndex) => {
           const Icon = group.icon;
 
           return (
-            <section className="faq-category" key={group.category}>
+            <div className="faq-category" key={group.category}>
               <div className="faq-category-heading">
-                <Icon size={24} />
+                <Icon size={23} />
                 <h2>{group.category}</h2>
               </div>
 
               <div className="faq-list">
-                {group.questions.map((faq, index) => {
-                  const questionId =
-                    `${group.category}-${index}`;
-
-                  const isOpen = activeQuestion === questionId;
+                {group.questions.map((item, questionIndex) => {
+                  const id = `${groupIndex}-${questionIndex}`;
+                  const isOpen = activeQuestion === id;
 
                   return (
-                    <article className="faq-item" key={questionId}>
+                    <div
+                      className={`faq-item ${isOpen ? "faq-item-open" : ""}`}
+                      key={id}
+                    >
                       <button
                         type="button"
                         className="faq-question"
-                        onClick={() =>
-                          setActiveQuestion(
-                            isOpen ? null : questionId
-                          )
-                        }
+                        onClick={() => toggleQuestion(id)}
                         aria-expanded={isOpen}
                       >
-                        <span>{faq.question}</span>
+                        <span>{item.question}</span>
                         <ChevronDown
                           size={19}
                           className={isOpen ? "faq-chevron-open" : ""}
@@ -149,32 +144,37 @@ function Help() {
 
                       {isOpen && (
                         <div className="faq-answer">
-                          <p>{faq.answer}</p>
+                          <p>{item.answer}</p>
                         </div>
                       )}
-                    </article>
+                    </div>
                   );
                 })}
               </div>
-            </section>
+            </div>
           );
         })}
       </section>
 
-      <section className="contact-section">
-        <HelpCircle size={34} />
-        <h2>Still have questions?</h2>
+      <section className="help-contact-section">
+        <div className="help-contact-icon">
+          <HelpCircle size={34} />
+        </div>
+
+        <h2>Still Have Questions?</h2>
         <p>
-          Our team will be happy to assist you.
+          Our team is happy to help with your enquiries.
+          Contact us directly through WhatsApp.
         </p>
 
         <a
-          href="https://wa.me/917745062299"
-          className="print-button"
+          href="https://wa.me/917745062299?text=Hello!%20I%20need%20help%20with%20your%20services."
           target="_blank"
           rel="noopener noreferrer"
+          className="primary-button"
         >
-          Contact Us on WhatsApp
+          <MessageCircle size={17} />
+          Contact Support
         </a>
       </section>
     </main>
