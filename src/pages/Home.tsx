@@ -1,166 +1,246 @@
 
+import { Link } from "react-router-dom";
+import {
+  Printer,
+  FileText,
+  Landmark,
+  Calculator,
+  Database,
+  ArrowRight,
+  ShieldCheck,
+  Clock,
+  MapPin,
+  Phone,
+  CheckCircle2
+} from "lucide-react";
+
+const services = [
+  {
+    icon: Printer,
+    title: "Xerox & Printing",
+    description: "Black and white printing, colour printing, photocopying and document scanning."
+  },
+  {
+    icon: FileText,
+    title: "Online Services",
+    description: "Online applications, form filling, registrations and document uploads."
+  },
+  {
+    icon: Landmark,
+    title: "Government Services",
+    description: "Assistance with government-related applications and documentation."
+  },
+  {
+    icon: Calculator,
+    title: "Tax Services",
+    description: "Income tax-related work and documentation assistance."
+  },
+  {
+    icon: Database,
+    title: "Business & Data Services",
+    description: "Data entry, document preparation and business support services."
+  }
+];
+
 function Home() {
   return (
-    <>
+    <main>
+      {/* HERO SECTION */}
       <section className="hero" id="home">
         <div className="hero-content">
-          <span className="eyebrow">
-            YOUR ONE-STOP SERVICE DESTINATION
-          </span>
+          <span className="eyebrow">WELCOME TO GURUKRUPA XEROX</span>
 
           <h1>
-            Every Document.
-            <br />
             Every Service.
             <br />
-            <span>One Trusted Place.</span>
+            <span>One Destination.</span>
           </h1>
 
           <p>
-            From professional printing and photocopying to
-            online applications and business services,
-            we make your everyday work simpler.
+            From everyday printing and photocopying to online applications,
+            government documentation and business services — we're here to
+            make your work simpler.
           </p>
 
           <div className="hero-actions">
-            <a href="#print" className="print-button">
-              Start Printing →
-            </a>
+            <Link to="/services" className="primary-button">
+              Explore Our Services <ArrowRight size={18} />
+            </Link>
 
-            <a href="#services" className="secondary-button">
-              Explore Services
-            </a>
+            <Link to="/contact" className="secondary-button">
+              Contact Us
+            </Link>
           </div>
 
-          <div className="hero-location">
-            <span>📍</span>
-            Balaji Nagar, New Bhokardan, Maharashtra
+          <div className="hero-trust">
+            <span><CheckCircle2 size={16} /> Convenient Services</span>
+            <span><CheckCircle2 size={16} /> Helpful Support</span>
           </div>
         </div>
 
         <div className="hero-visual">
-          <div className="visual-card visual-card-main">
-            <span className="visual-icon">📄</span>
-            <strong>Print. Submit. Done.</strong>
-            <p>Your documents, handled with care.</p>
+          <div className="hero-visual-card">
+            <div className="hero-icon">
+              <Printer size={48} />
+            </div>
+            <span className="hero-card-label">YOUR ONE-STOP</span>
+            <h2>Service Destination</h2>
+            <p>Printing · Online Work · Documentation</p>
+            <div className="hero-card-line" />
+            <span className="hero-card-location">
+              <MapPin size={15} /> Bhokardan, Maharashtra
+            </span>
           </div>
-
-          <div className="visual-card visual-card-small">
-            <span>✓</span>
-            Reliable Services
-          </div>
-
-          <div className="visual-decoration">GS</div>
         </div>
       </section>
 
+      {/* TRUST STRIP */}
       <section className="trust-strip">
         <div>
-          <strong>Printing</strong>
-          <span>Quality document solutions</span>
+          <ShieldCheck size={23} />
+          <span>Reliable Assistance</span>
         </div>
-
         <div>
-          <strong>Online Services</strong>
-          <span>Convenient digital assistance</span>
+          <Clock size={23} />
+          <span>Convenient Services</span>
         </div>
-
         <div>
-          <strong>Business Support</strong>
-          <span>Everyday work made easier</span>
+          <MapPin size={23} />
+          <span>Located in Bhokardan</span>
         </div>
       </section>
 
-      <section className="section" id="services">
+      {/* SERVICES */}
+      <section className="section services-section" id="services">
         <div className="section-heading">
-          <span className="eyebrow">WHAT WE DO</span>
-          <h2>Services designed around you.</h2>
+          <span className="eyebrow">WHAT WE OFFER</span>
+          <h2>Services Designed Around Your Needs</h2>
           <p>
-            One destination for your printing, documentation
-            and everyday service requirements.
+            Multiple everyday services, brought together under one roof.
           </p>
         </div>
 
-        <div className="service-grid">
-          <article className="service-card">
-            <span>🖨️</span>
-            <h3>Xerox & Printing</h3>
-            <p>
-              Black and white printing, colour printing,
-              photocopying and scanning.
-            </p>
-          </article>
+        <div className="services-grid">
+          {services.map((service) => {
+            const Icon = service.icon;
 
-          <article className="service-card">
-            <span>💻</span>
-            <h3>Online Services</h3>
-            <p>
-              Online form filling, applications,
-              registrations and document uploads.
-            </p>
-          </article>
+            return (
+              <article className="service-card" key={service.title}>
+                <div className="service-icon">
+                  <Icon size={27} />
+                </div>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+                <Link to="/services" className="text-link">
+                  Explore service <ArrowRight size={15} />
+                </Link>
+              </article>
+            );
+          })}
+        </div>
 
-          <article className="service-card">
-            <span>🏛️</span>
-            <h3>Government Services</h3>
-            <p>
-              Assistance with government-related
-              applications and documentation.
-            </p>
-          </article>
-
-          <article className="service-card">
-            <span>📊</span>
-            <h3>Tax & Business Services</h3>
-            <p>
-              Income tax-related work, data entry
-              and business documentation.
-            </p>
-          </article>
+        <div className="section-action">
+          <Link to="/services" className="primary-button">
+            View All Services <ArrowRight size={17} />
+          </Link>
         </div>
       </section>
 
+      {/* PRINT ONLINE PROMOTION */}
       <section className="print-promo" id="print">
-        <div>
-          <span className="eyebrow">PRINT FROM ANYWHERE</span>
-          <h2>Your documents. Our printing. Easy pickup.</h2>
+        <div className="print-promo-content">
+          <span className="eyebrow">PRINTING MADE CONVENIENT</span>
+          <h2>Send Your Documents. Collect Them at Our Shop.</h2>
           <p>
-            Upload your documents online, review your
-            printing details and collect your order
-            from our shop.
+            Our planned online printing service will let you upload documents,
+            review printing details and place an order for shop pickup.
           </p>
+
+          <Link to="/print-online" className="primary-button">
+            Explore Print Online <ArrowRight size={17} />
+          </Link>
         </div>
 
-        <a href="#contact" className="print-button">
-          Explore Print Online →
-        </a>
+        <div className="print-promo-icon">
+          <Printer size={100} strokeWidth={1.2} />
+        </div>
       </section>
 
-      <section className="section about-section" id="about">
-        <span className="eyebrow">ABOUT OUR BUSINESS</span>
-        <h2>Service you can count on.</h2>
+      {/* ABOUT PREVIEW */}
+      <section className="section about-preview">
+        <div className="about-preview-visual">
+          <div className="about-monogram">GS</div>
+          <span>GURUKRUPA XEROX</span>
+          <strong>AND SOHAM MULTISERVICES</strong>
+        </div>
+
+        <div className="about-preview-content">
+          <span className="eyebrow">GET TO KNOW US</span>
+          <h2>Making Everyday Work Simpler</h2>
+          <p>
+            Gurukrupa Xerox And Soham Multiservices brings printing,
+            documentation, online assistance and business support services
+            together in one convenient destination.
+          </p>
+          <p>
+            We aim to make everyday tasks easier through accessible services
+            and helpful customer support.
+          </p>
+
+          <Link to="/about" className="text-link">
+            Learn More About Us <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+
+      {/* WHY CHOOSE US */}
+      <section className="section why-section">
+        <div className="section-heading">
+          <span className="eyebrow">WHY CHOOSE US</span>
+          <h2>A Convenient Place for Multiple Needs</h2>
+        </div>
+
+        <div className="why-grid">
+          <div className="why-card">
+            <ShieldCheck size={30} />
+            <h3>One Destination</h3>
+            <p>Access a range of everyday services in one place.</p>
+          </div>
+
+          <div className="why-card">
+            <Clock size={30} />
+            <h3>Convenience</h3>
+            <p>Save effort by getting multiple tasks handled together.</p>
+          </div>
+
+          <div className="why-card">
+            <Phone size={30} />
+            <h3>Customer Support</h3>
+            <p>Reach out to us for service enquiries and assistance.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT CTA */}
+      <section className="contact-cta" id="contact">
+        <span className="eyebrow">WE'RE HERE TO HELP</span>
+        <h2>Have a Service Enquiry?</h2>
         <p>
-          Gurukrupa Xerox And Soham Multiservices is your
-          local destination for printing, online services,
-          government documentation and business support
-          in New Bhokardan.
-        </p>
-      </section>
-
-      <section className="contact-section" id="contact">
-        <span className="eyebrow">VISIT OR CONTACT US</span>
-        <h2>We're here to help.</h2>
-
-        <p>
-          Plot No. 48, Balaji Nagar, New Bhokardan,
-          Maharashtra – 431114
+          Get in touch with Gurukrupa Xerox And Soham Multiservices.
+          We'd be happy to assist you.
         </p>
 
-        <a href="tel:7745062299" className="print-button">
-          Call 7745062299
-        </a>
+        <div className="hero-actions">
+          <Link to="/contact" className="primary-button">
+            Contact Us <ArrowRight size={17} />
+          </Link>
+
+          <a href="tel:+917745062299" className="secondary-button">
+            <Phone size={16} /> Call Us
+          </a>
+        </div>
       </section>
-    </>
+    </main>
   );
 }
 
