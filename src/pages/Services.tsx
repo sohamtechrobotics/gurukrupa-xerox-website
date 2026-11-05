@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import {
   Printer,
   Laptop,
@@ -6,69 +7,72 @@ import {
   Calculator,
   BriefcaseBusiness,
   ScanLine,
-  FileText
+  FileText,
+  ArrowRight,
+  CheckCircle2
 } from "lucide-react";
 
-const services = [
+const serviceCategories = [
   {
     icon: Printer,
     title: "Xerox & Printing",
     description:
-      "Document printing and photocopying solutions for everyday needs.",
-    items: [
-      "Black & White Printing",
-      "Colour Printing",
-      "Photocopying",
-      "Document Scanning",
-      "Document Printing"
+      "Everyday printing and document reproduction services for students, individuals and businesses.",
+    services: [
+      "Black and white printing",
+      "Colour printing",
+      "Photocopying and Xerox",
+      "Document printing",
+      "Document scanning"
     ]
   },
   {
     icon: Laptop,
     title: "Online Services",
     description:
-      "Convenient assistance with online applications and digital processes.",
-    items: [
-      "Online Form Filling",
-      "Application Assistance",
-      "Online Registrations",
-      "Document Uploads",
-      "Digital Service Assistance"
+      "Assistance with online applications, digital forms and document-related processes.",
+    services: [
+      "Online form filling",
+      "Application assistance",
+      "Online registrations",
+      "Document uploads",
+      "Digital application support"
     ]
   },
   {
     icon: Landmark,
     title: "Government Services",
     description:
-      "Assistance with government-related applications and documentation.",
-    items: [
-      "Government Applications",
-      "Online Government Forms",
-      "Documentation Assistance",
-      "Application Support"
+      "Assistance with government-related applications and documentation requirements.",
+    services: [
+      "Government form assistance",
+      "Online application support",
+      "Document preparation",
+      "Application-related assistance"
     ]
   },
   {
     icon: Calculator,
     title: "Tax Services",
     description:
-      "Assistance with income tax-related work and documentation.",
-    items: [
-      "Income Tax-related Work",
-      "Tax Documentation",
-      "Application Assistance"
+      "Income tax-related work and documentation assistance.",
+    services: [
+      "Income tax-related work",
+      "Tax documentation assistance",
+      "Online tax form assistance",
+      "Related documentation support"
     ]
   },
   {
     icon: BriefcaseBusiness,
     title: "Business & Data Services",
     description:
-      "Practical document and data support for businesses and individuals.",
-    items: [
-      "Data Entry Services",
-      "Document Preparation",
-      "Business Documentation",
-      "Digital Data Services"
+      "Digital documentation and data-related assistance for businesses and individuals.",
+    services: [
+      "Data entry services",
+      "Document preparation",
+      "Digital data management",
+      "Business documentation support"
     ]
   }
 ];
@@ -77,69 +81,92 @@ function Services() {
   return (
     <main className="page-container">
       <section className="page-hero">
-        <span className="eyebrow">OUR EXPERTISE</span>
-        <h1>Services That Make Life Easier.</h1>
+        <span className="eyebrow">OUR SERVICES</span>
+        <h1>Everything You Need, Under One Roof</h1>
         <p>
-          From a single photocopy to online documentation
-          and business support, discover our range of
-          everyday services.
+          Explore our printing, online, government documentation,
+          tax and business support services.
         </p>
       </section>
 
       <section className="section services-page-section">
         <div className="section-heading">
-          <span className="eyebrow">WHAT WE OFFER</span>
-          <h2>Everything you need, in one place.</h2>
+          <span className="eyebrow">WHAT WE DO</span>
+          <h2>Explore Our Service Categories</h2>
           <p>
-            Explore our service categories and contact
-            us for assistance.
+            Choose a category to learn more about the assistance
+            available at Gurukrupa Xerox And Soham Multiservices.
           </p>
         </div>
 
-        <div className="services-list">
-          {services.map((service, index) => {
-            const Icon = service.icon;
+        <div className="service-category-grid">
+          {serviceCategories.map((category, index) => {
+            const Icon = category.icon;
 
             return (
-              <article className="service-detail-card" key={service.title}>
-                <div className="service-detail-icon">
-                  <Icon size={30} />
-                </div>
-
-                <div className="service-detail-content">
+              <article
+                className="service-category-card"
+                key={category.title}
+              >
+                <div className="service-category-top">
+                  <div className="service-icon">
+                    <Icon size={29} />
+                  </div>
                   <span className="service-number">
-                    SERVICE 0{index + 1}
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-
-                  <h2>{service.title}</h2>
-                  <p>{service.description}</p>
-
-                  <ul>
-                    {service.items.map((item) => (
-                      <li key={item}>
-                        <ScanLine size={15} />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
+
+                <h2>{category.title}</h2>
+                <p>{category.description}</p>
+
+                <ul className="service-detail-list">
+                  {category.services.map((service) => (
+                    <li key={service}>
+                      <CheckCircle2 size={16} />
+                      <span>{service}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link to="/contact" className="text-link">
+                  Enquire About This Service
+                  <ArrowRight size={16} />
+                </Link>
               </article>
             );
           })}
         </div>
       </section>
 
-      <section className="contact-section">
-        <FileText size={34} />
-        <h2>Need help with a service?</h2>
+      <section className="service-highlight">
+        <div>
+          <span className="eyebrow">ONLINE PRINTING</span>
+          <h2>Planning to Print Documents?</h2>
+          <p>
+            Explore our planned online printing service and its
+            proposed pricing and order process.
+          </p>
+        </div>
+
+        <Link to="/print-online" className="primary-button">
+          Explore Print Online
+          <ArrowRight size={17} />
+        </Link>
+      </section>
+
+      <section className="contact-cta">
+        <span className="eyebrow">NEED ASSISTANCE?</span>
+        <h2>Let's Discuss Your Requirements</h2>
         <p>
-          Get in touch with us to discuss your
-          requirements.
+          Contact us to enquire about a service or get help
+          understanding the process.
         </p>
 
-        <a href="tel:7745062299" className="print-button">
+        <Link to="/contact" className="primary-button">
           Contact Our Team
-        </a>
+          <ArrowRight size={17} />
+        </Link>
       </section>
     </main>
   );
