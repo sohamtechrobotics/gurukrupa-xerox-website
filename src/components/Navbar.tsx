@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import {
   Menu,
   X,
@@ -19,14 +20,14 @@ function Navbar() {
 
   return (
     <header className="site-header">
-      <a href="#home" className="brand" onClick={closeMenu}>
+      <Link to="/" className="brand" onClick={closeMenu}>
         <span className="brand-mark">GS</span>
 
         <span className="brand-name">
           <strong>Gurukrupa Xerox</strong>
           <small>And Soham Multiservices</small>
         </span>
-      </a>
+      </Link>
 
       <button
         className="mobile-menu-toggle"
@@ -39,8 +40,13 @@ function Navbar() {
       </button>
 
       <nav className={`main-nav ${menuOpen ? "mobile-open" : ""}`}>
-        <a href="#home" onClick={closeMenu}>Home</a>
-        <a href="#about" onClick={closeMenu}>About Us</a>
+        <NavLink to="/" end onClick={closeMenu}>
+          Home
+        </NavLink>
+
+        <NavLink to="/about" onClick={closeMenu}>
+          About Us
+        </NavLink>
 
         <div className="nav-dropdown">
           <button
@@ -52,28 +58,72 @@ function Navbar() {
             Services <ChevronDown size={15} />
           </button>
 
-          <div className={`nav-dropdown-menu ${servicesOpen ? "dropdown-open" : ""}`}>
-            <a href="#services" onClick={closeMenu}>Xerox & Printing</a>
-            <a href="#services" onClick={closeMenu}>Online Services</a>
-            <a href="#services" onClick={closeMenu}>Government Services</a>
-            <a href="#services" onClick={closeMenu}>Tax & Business Services</a>
+          <div
+            className={`nav-dropdown-menu ${
+              servicesOpen ? "dropdown-open" : ""
+            }`}
+          >
+            <Link to="/services" onClick={closeMenu}>
+              All Services
+            </Link>
+
+            <Link to="/services" onClick={closeMenu}>
+              Xerox & Printing
+            </Link>
+
+            <Link to="/services" onClick={closeMenu}>
+              Online Services
+            </Link>
+
+            <Link to="/services" onClick={closeMenu}>
+              Government Services
+            </Link>
+
+            <Link to="/services" onClick={closeMenu}>
+              Tax & Business Services
+            </Link>
           </div>
         </div>
 
-        <a href="#print" onClick={closeMenu}>Print Online</a>
-        <a href="#contact" onClick={closeMenu}>Contact Us</a>
+        <NavLink to="/print-online" onClick={closeMenu}>
+          Print Online
+        </NavLink>
+
+        <NavLink to="/gallery" onClick={closeMenu}>
+          Gallery
+        </NavLink>
+
+        <NavLink to="/contact" onClick={closeMenu}>
+          Contact Us
+        </NavLink>
+
+        <NavLink
+          to="/help"
+          className="mobile-help-link"
+          onClick={closeMenu}
+        >
+          Help Centre
+        </NavLink>
       </nav>
 
       <div className="header-actions">
-        <a href="#track" className="track-link">
+        <Link
+          to="/track-order"
+          className="track-link"
+          onClick={closeMenu}
+        >
           <PackageSearch size={16} />
           Track Order
-        </a>
+        </Link>
 
-        <a href="#print" className="print-button">
+        <Link
+          to="/print-online"
+          className="print-button"
+          onClick={closeMenu}
+        >
           <Printer size={16} />
           Print Online
-        </a>
+        </Link>
       </div>
     </header>
   );
