@@ -15,6 +15,7 @@
 
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body>
@@ -120,14 +121,14 @@
           <span class="upload-icon">↑</span>
           <strong>Choose documents</strong>
           <span>Click here or drag and drop your files</span>
-          <small>PDF, DOC, DOCX, JPG and PNG · Maximum 15 MB per file</small>
+          <small>PDF, JPG and PNG · Maximum 15 MB per file</small>
         </label>
 
         <input
           type="file"
           id="documentInput"
           multiple
-          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
+          accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
           hidden
         >
 
@@ -183,9 +184,8 @@
       <div>
         <strong>Please note</strong>
         <p>
-          This is the document-selection stage. Files remain on your device
-          and are not sent to Gurukrupa Xerox yet. Online submission,
-          print settings, pricing and payment will be added in later stages.
+          PDF page counts are read automatically. Each JPG or PNG counts as one page.
+          Word files must be saved as PDF before upload so the page count and price are accurate.
         </p>
       </div>
     </div>
@@ -223,8 +223,8 @@
         <div class="setting-input-grid">
           <div class="setting-group">
             <label for="pageCount">Total pages</label>
-            <input type="number" id="pageCount" min="1" max="10000" value="1" inputmode="numeric">
-            <small>Enter the total pages in one document set.</small>
+            <input type="number" id="pageCount" min="1" max="10000" value="0" inputmode="numeric" readonly aria-describedby="pageCountHelp">
+            <small id="pageCountHelp">Automatically counted from your selected PDFs and images.</small>
           </div>
           <div class="setting-group">
             <label for="copyCount">Number of copies</label>
@@ -414,222 +414,113 @@
       const previewContent = document.getElementById("previewContent");
       const previewFileName = document.getElementById("previewFileName");
       const clearButton = document.getElementById("clearFiles");
-
+      const pageCountInput = document.getElementById("pageCount");
       const MAX_FILE_SIZE = 15 * 1024 * 1024;
       const MAX_FILES = 10;
-
-      const allowedExtensions = [
-        "pdf", "doc", "docx", "jpg", "jpeg", "png"
-      ];
-
+      const allowedExtensions = ["pdf", "jpg", "jpeg", "png"];
       let selectedFiles = [];
       let previewUrl = null;
+      let countRun = 0;
       window.getSelectedPrintFiles = () => selectedFiles;
 
-      function formatSize(bytes) {
-        if (bytes < 1024 * 1024) {
-          return (bytes / 1024).toFixed(1) + " KB";
-        }
-        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
-      }
-
-      function getExtension(name) {
-        return name.split(".").pop().toLowerCase();
-      }
-
-      function showMessage(text, type = "info") {
-        message.textContent = text;
-        message.className = "upload-message " + type;
-      }
-
-      function releasePreview() {
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl);
-          previewUrl = null;
-        }
-      }
-
+      function ext(name) { return name.split(".").pop().toLowerCase(); }
+      function formatSize(bytes) { return bytes < 1048576 ? (bytes / 1024).toFixed(1) + " KB" : (bytes / 1048576).toFixed(2) + " MB"; }
+      function showMessage(text, type="info") { message.textContent=text; message.className="upload-message "+type; }
+      function releasePreview() { if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl=null; } }
       function resetPreview() {
-        releasePreview();
-        previewFileName.textContent = "No document selected";
-        previewContent.innerHTML = `
-          <div class="preview-placeholder">
-            <span>PDF</span>
-            <strong>Your preview will appear here</strong>
-            <p>Select a PDF document to view it.</p>
-          </div>`;
+        releasePreview(); previewFileName.textContent="No document selected";
+        previewContent.innerHTML='<div class="preview-placeholder"><span>PDF</span><strong>Your preview will appear here</strong><p>Select a PDF document to view it.</p></div>';
       }
-
       function renderPreview(index) {
-        const file = selectedFiles[index];
-        if (!file) {
-          resetPreview();
-          return;
-        }
-
-        releasePreview();
-        previewFileName.textContent = file.name;
-
-        if (getExtension(file.name) === "pdf") {
-          previewUrl = URL.createObjectURL(file);
-          previewContent.innerHTML = "";
-
-          const frame = document.createElement("iframe");
-          frame.className = "pdf-preview-frame";
-          frame.title = "PDF preview: " + file.name;
-          frame.src = previewUrl;
-          previewContent.appendChild(frame);
+        const file=selectedFiles[index]; if(!file){resetPreview();return;}
+        releasePreview(); previewFileName.textContent=file.name;
+        if(ext(file.name)==="pdf") {
+          previewUrl=URL.createObjectURL(file); previewContent.innerHTML="";
+          const frame=document.createElement("iframe"); frame.className="pdf-preview-frame"; frame.title="PDF preview: "+file.name; frame.src=previewUrl; previewContent.appendChild(frame);
         } else {
-          previewContent.innerHTML = `
-            <div class="preview-placeholder">
-              <span>${getExtension(file.name).toUpperCase()}</span>
-              <strong>Preview not available</strong>
-              <p>This file is selected and ready for the next stage.</p>
-            </div>`;
+          previewUrl=URL.createObjectURL(file); previewContent.innerHTML="";
+          const img=document.createElement("img"); img.src=previewUrl; img.alt="Preview of "+file.name; img.style.cssText="max-width:100%;max-height:100%;object-fit:contain"; previewContent.appendChild(img);
         }
       }
-
+      async function countPages(file) {
+        const extension=ext(file.name);
+        if(extension==="jpg"||extension==="jpeg"||extension==="png") return 1;
+        if(extension!=="pdf") throw new Error("Save Word documents as PDF before uploading.");
+        if(!window.pdfjsLib) throw new Error("PDF page-count library did not load. Refresh the page and try again.");
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        const data=new Uint8Array(await file.arrayBuffer());
+        const pdf=await pdfjsLib.getDocument({data}).promise;
+        return pdf.numPages;
+      }
+      async function recalculatePages() {
+        const thisRun=++countRun;
+        pageCountInput.value="0";
+        pageCountInput.dataset.ready="false";
+        pageCountInput.setCustomValidity("Wait until page counting finishes.");
+        if(!selectedFiles.length) {
+          pageCountInput.setCustomValidity("");
+          window.dispatchEvent(new Event("printfileschanged"));
+          return;
+        }
+        showMessage("Counting pages in your documents…","info");
+        try {
+          const counts=await Promise.all(selectedFiles.map(countPages));
+          if(thisRun!==countRun) return;
+          const total=counts.reduce((sum,n)=>sum+n,0);
+          pageCountInput.value=String(total);
+          pageCountInput.dataset.ready="true";
+          pageCountInput.setCustomValidity("");
+          showMessage(`Page count complete: ${total} page(s) across ${selectedFiles.length} file(s).`,"success");
+        } catch(error) {
+          if(thisRun!==countRun) return;
+          pageCountInput.setCustomValidity(error.message || "Could not count document pages.");
+          showMessage(error.message || "Could not count document pages.","error");
+        }
+        window.dispatchEvent(new Event("printfileschanged"));
+      }
       function renderFiles() {
-        fileList.innerHTML = "";
-
-        if (selectedFiles.length === 0) {
-          fileList.appendChild(emptyState);
-          emptyState.style.display = "flex";
-          fileCount.textContent = "No files selected";
-          resetPreview();
-          return;
+        fileList.innerHTML="";
+        if(!selectedFiles.length) {
+          fileList.appendChild(emptyState); emptyState.style.display="flex";
+          fileCount.textContent="No files selected"; resetPreview(); recalculatePages(); return;
         }
-
-        emptyState.style.display = "none";
-        fileCount.textContent =
-          selectedFiles.length + (selectedFiles.length === 1 ? " file selected" : " files selected");
-
-        selectedFiles.forEach((file, index) => {
-          const item = document.createElement("div");
-          item.className = "upload-file-item";
-
-          const icon = document.createElement("div");
-          icon.className = "file-type-icon";
-          icon.textContent = getExtension(file.name).toUpperCase();
-
-          const details = document.createElement("div");
-          details.className = "file-details";
-
-          const name = document.createElement("strong");
-          name.textContent = file.name;
-
-          const size = document.createElement("span");
-          size.textContent = formatSize(file.size) + " · Selected on this device";
-
-          details.append(name, size);
-
-          const previewButton = document.createElement("button");
-          previewButton.type = "button";
-          previewButton.className = "file-action";
-          previewButton.textContent = "Preview";
-          previewButton.addEventListener("click", () => renderPreview(index));
-
-          const removeButton = document.createElement("button");
-          removeButton.type = "button";
-          removeButton.className = "file-remove";
-          removeButton.textContent = "Remove";
-          removeButton.setAttribute("aria-label", "Remove " + file.name);
-          removeButton.addEventListener("click", () => {
-            selectedFiles.splice(index, 1);
-            renderFiles();
-            showMessage("Document removed.", "info");
-          });
-
-          item.append(icon, details, previewButton, removeButton);
-          fileList.appendChild(item);
+        emptyState.style.display="none";
+        fileCount.textContent=selectedFiles.length+(selectedFiles.length===1?" file selected":" files selected");
+        selectedFiles.forEach((file,index)=>{
+          const item=document.createElement("div"); item.className="upload-file-item";
+          const icon=document.createElement("div"); icon.className="file-type-icon"; icon.textContent=ext(file.name).toUpperCase();
+          const details=document.createElement("div"); details.className="file-details";
+          const name=document.createElement("strong"); name.textContent=file.name;
+          const size=document.createElement("span"); size.textContent=formatSize(file.size)+" · Counting pages…";
+          details.append(name,size);
+          const preview=document.createElement("button"); preview.type="button"; preview.className="file-action"; preview.textContent="Preview"; preview.addEventListener("click",()=>renderPreview(index));
+          const remove=document.createElement("button"); remove.type="button"; remove.className="file-remove"; remove.textContent="Remove"; remove.setAttribute("aria-label","Remove "+file.name);
+          remove.addEventListener("click",()=>{selectedFiles.splice(index,1);renderFiles();showMessage("Document removed; recalculating pages.","info");});
+          item.append(icon,details,preview,remove); fileList.appendChild(item);
         });
-
-        if (selectedFiles.length === 1) {
-          renderPreview(0);
-        } else {
-          resetPreview();
-        }
+        if(selectedFiles.length===1) renderPreview(0); else resetPreview();
+        recalculatePages();
       }
-
       function addFiles(files) {
-        let added = 0;
-        const rejected = [];
-
-        Array.from(files).forEach(file => {
-          const extension = getExtension(file.name);
-
-          if (!allowedExtensions.includes(extension)) {
-            rejected.push(file.name + " (unsupported format)");
-            return;
-          }
-
-          if (file.size > MAX_FILE_SIZE) {
-            rejected.push(file.name + " (over 15 MB)");
-            return;
-          }
-
-          if (selectedFiles.some(existing =>
-            existing.name === file.name &&
-            existing.size === file.size &&
-            existing.lastModified === file.lastModified
-          )) {
-            rejected.push(file.name + " (already selected)");
-            return;
-          }
-
-          if (selectedFiles.length >= MAX_FILES) {
-            rejected.push(file.name + " (maximum 10 files)");
-            return;
-          }
-
-          selectedFiles.push(file);
-          added++;
+        let added=0; const rejected=[];
+        Array.from(files).forEach(file=>{
+          const extension=ext(file.name);
+          if(!allowedExtensions.includes(extension)){rejected.push(file.name+" (use PDF, JPG or PNG)");return;}
+          if(file.size>MAX_FILE_SIZE){rejected.push(file.name+" (over 15 MB)");return;}
+          if(selectedFiles.some(f=>f.name===file.name&&f.size===file.size&&f.lastModified===file.lastModified)){rejected.push(file.name+" (already selected)");return;}
+          if(selectedFiles.length>=MAX_FILES){rejected.push(file.name+" (maximum 10 files)");return;}
+          selectedFiles.push(file); added++;
         });
-
         renderFiles();
-
-        if (rejected.length) {
-          showMessage(
-            (added ? added + " file(s) added. " : "") +
-            "Not added: " + rejected.join(", "),
-            "warning"
-          );
-        } else if (added) {
-          showMessage(added + " file(s) added successfully.", "success");
-        }
+        if(rejected.length) showMessage((added?added+" file(s) added. ":"")+"Not added: "+rejected.join(", "),"warning");
+        else if(added) showMessage("Files added. Counting pages…","info");
       }
-
-      input.addEventListener("change", event => {
-        addFiles(event.target.files);
-        input.value = "";
-      });
-
-      clearButton.addEventListener("click", () => {
-        selectedFiles = [];
-        renderFiles();
-        showMessage("All selected documents have been cleared.", "info");
-      });
-
-      ["dragenter", "dragover"].forEach(eventName => {
-        dropzone.addEventListener(eventName, event => {
-          event.preventDefault();
-          dropzone.classList.add("drag-active");
-        });
-      });
-
-      ["dragleave", "drop"].forEach(eventName => {
-        dropzone.addEventListener(eventName, event => {
-          event.preventDefault();
-          dropzone.classList.remove("drag-active");
-        });
-      });
-
-      dropzone.addEventListener("drop", event => {
-        addFiles(event.dataTransfer.files);
-      });
-
-      window.addEventListener("beforeunload", releasePreview);
-
+      input.addEventListener("change",event=>{addFiles(event.target.files);input.value="";});
+      clearButton.addEventListener("click",()=>{selectedFiles=[];renderFiles();showMessage("All selected documents cleared.","info");});
+      ["dragenter","dragover"].forEach(name=>dropzone.addEventListener(name,event=>{event.preventDefault();dropzone.classList.add("drag-active");}));
+      ["dragleave","drop"].forEach(name=>dropzone.addEventListener(name,event=>{event.preventDefault();dropzone.classList.remove("drag-active");}));
+      dropzone.addEventListener("drop",event=>addFiles(event.dataTransfer.files));
+      window.addEventListener("beforeunload",releasePreview);
       renderFiles();
     })();
   </script>
@@ -657,16 +548,16 @@
       const money = amount => "₹" + amount.toLocaleString("en-IN");
 
       function updateEstimate() {
-        const pages = Math.max(1, Math.min(10000, parseInt(pagesInput.value, 10) || 1));
+        const pages = Math.max(0, Math.min(10000, parseInt(pagesInput.value, 10) || 0));
         const copies = Math.max(1, Math.min(500, parseInt(copiesInput.value, 10) || 1));
         const doubleSided = sides.value === "double";
-        const sheetsPerCopy = doubleSided ? Math.ceil(pages / 2) : pages;
+        const sheetsPerCopy = pages === 0 ? 0 : (doubleSided ? Math.ceil(pages / 2) : pages);
         const rate = rates[mode.value][sides.value];
         const totalSheets = sheetsPerCopy * copies;
 
         pagesInput.value = pages;
         copiesInput.value = copies;
-        priceOutput.textContent = money(totalSheets * rate);
+        priceOutput.textContent = pages === 0 ? "—" : money(totalSheets * rate);
         rateOutput.textContent = money(rate) + " / sheet";
         sheetOutput.textContent = sheetsPerCopy.toLocaleString("en-IN");
         copiesOutput.textContent = copies.toLocaleString("en-IN");
@@ -734,11 +625,11 @@
       const money = value => "₹" + Number(value).toLocaleString("en-IN");
 
       function getOrderNumbers() {
-        const pages = Math.max(1, parseInt(pagesInput?.value, 10) || 1);
+        const pages = Math.max(0, parseInt(pagesInput?.value, 10) || 0);
         const copies = Math.max(1, parseInt(copiesInput?.value, 10) || 1);
         const modeValue = mode?.value || "bw";
         const sidesValue = sides?.value || "single";
-        const sheetsPerCopy = sidesValue === "double" ? Math.ceil(pages / 2) : pages;
+        const sheetsPerCopy = pages === 0 ? 0 : (sidesValue === "double" ? Math.ceil(pages / 2) : pages);
         const totalSheets = sheetsPerCopy * copies;
         const rate = {
           bw: { single: 3, double: 5 },
@@ -776,7 +667,7 @@
         byId("reviewPages").textContent = order.pages.toLocaleString("en-IN");
         byId("reviewCopies").textContent = order.copies.toLocaleString("en-IN");
         byId("reviewSheets").textContent = order.totalSheets.toLocaleString("en-IN");
-        byId("reviewTotal").textContent = money(order.total);
+        byId("reviewTotal").textContent = order.pages === 0 ? "—" : money(order.total);
       }
 
       [mode, sides, pagesInput, copiesInput].filter(Boolean).forEach(control => {
@@ -795,6 +686,11 @@
           return;
         }
         if (!form.reportValidity()) return;
+        if (pagesInput.dataset.ready !== "true" || Number(pagesInput.value) < 1) {
+          message.textContent = "Please wait for the automatic page count to finish.";
+          message.className = "order-form-message error";
+          return;
+        }
 
         const name = byId("customerName").value.trim();
         const phone = byId("customerPhone").value.trim();
@@ -834,6 +730,7 @@
           message.className = "order-form-message success";
           submitButton.textContent = "Order submitted ✓";
           form.reset();
+          document.getElementById("clearFiles").click();
         } catch (error) {
           message.textContent = error instanceof Error ? error.message : "Something went wrong. Please try again.";
           message.className = "order-form-message error";
