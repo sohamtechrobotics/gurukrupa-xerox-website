@@ -65,7 +65,7 @@
     });
   }
 
-}); 
+});
       const isOpen = navLinks.classList.toggle("active");
       menuToggle.classList.toggle("active", isOpen);
       menuToggle.setAttribute("aria-expanded", String(isOpen));
@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ]
       }
     },
-         mr: {
+            mr: {
       nav: ["मुख्यपृष्ठ", "सेवा", "आमच्याबद्दल", "गॅलरी", "संपर्क"],
       print: "ऑनलाइन प्रिंटिंग",
       footer: ["महत्त्वाचे दुवे", "आमच्या सेवा", "संपर्क माहिती"],
@@ -501,7 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   };
-     // Add a selector automatically on pages where it is missing.
+        // Add a selector automatically on pages where it is missing.
   let languageSelect = $("#languageSelect");
 
   if (!languageSelect) {
