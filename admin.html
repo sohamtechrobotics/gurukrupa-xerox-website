@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a2d">
+  <title>Gurukrupa Xerox — Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1220;--panel:#111d31;--panel2:#16243b;--line:#293954;--text:#f4f6fb;--muted:#9eacc2;--gold:#d8b56d;--green:#54c49a;--red:#f17d7d}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#0b1220,#101b2e 60%,#0b1220);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+    button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:28px 0 60px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:13px}.mark{width:44px;height:44px;border:1px solid #8d7447;border-radius:13px;display:grid;place-items:center;color:var(--gold);font-weight:800;font-size:19px}.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+    .pill{border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--muted);font-size:12px}.live{color:var(--green);border-color:#28634f}
+    .panel{background:rgba(17,29,49,.94);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 50px #0003}
+    .login{max-width:420px;margin:8vh auto}.login h2{margin:0 0 6px;font-size:24px}.sub{color:var(--muted);margin:0 0 22px}
+    label{display:block;color:#c4cede;font-size:13px;margin:14px 0 6px}input,select{width:100%;background:#0b1526;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px 13px;outline:none}input:focus,select:focus{border-color:var(--gold)}
+    .btn{border:0;border-radius:10px;background:var(--gold);color:#151b25;font-weight:750;padding:11px 16px}.btn:disabled{opacity:.55;cursor:wait}.btn.secondary{background:#24344e;color:var(--text);border:1px solid var(--line)}.btn.small{padding:7px 10px;font-size:12px}
+    .error{color:#ff9c9c;font-size:13px;min-height:20px;margin-top:10px}.hidden{display:none!important}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}.toolbar h2{margin:0;font-size:25px}.toolbar p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font-size:25px;display:block;margin-top:5px}
+    .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.filters input{max-width:280px}.filters select{max-width:220px}
+    .orders{display:grid;gap:12px}.order{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px}.order-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.order-id{font-weight:800;color:var(--gold);font-size:16px}.muted{color:var(--muted);font-size:13px}.details{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}.detail span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.detail strong{display:block;font-size:14px;margin-top:3px;overflow-wrap:anywhere}
+    .order-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:13px}.status{max-width:245px;padding:8px 10px}.status-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tag{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:5px 9px;color:var(--muted)}
+    .empty{text-align:center;padding:42px 15px;color:var(--muted)}.foot{color:#71819a;font-size:12px;text-align:center;margin-top:25px}
+    @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.details{grid-template-columns:repeat(2,1fr)}.wrap{width:min(100% - 22px,1180px);padding-top:18px}.panel{padding:18px}.toolbar h2{font-size:22px}}
+    @media(max-width:420px){.order-top{display:block}.order-top .tag{display:inline-block;margin-top:8px}.details{gap:10px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="brand"><div class="mark">GK</div><div><h1>Gurukrupa Xerox</h1><p>Private order administration</p></div></div>
+      <span class="pill" id="connection">● Not connected</span>
+    </header>
+
+    <section class="panel login" id="loginPanel">
+      <h2>Admin sign in</h2>
+      <p class="sub">Sign in with the authorised shop admin account.</p>
+      <form id="loginForm">
+        <label for="email">Email address</label>
+        <input id="email" type="email" autocomplete="username" value="narayan.katore9@gmail.com" required>
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+        <button class="btn" id="loginBtn" style="width:100%;margin-top:18px">Sign in securely</button>
+        <div class="error" id="loginError" role="alert"></div>
+      </form>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="toolbar">
+        <div><h2>Print orders</h2><p>Live order monitoring · updates automatically</p></div>
+        <div style="display:flex;gap:9px;align-items:center"><span class="pill live" id="liveState">● Live updates on</span><button class="btn secondary small" id="logoutBtn">Sign out</button></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>Total orders</span><strong id="totalCount">0</strong></div>
+        <div class="stat"><span>New / received</span><strong id="newCount">0</strong></div>
+        <div class="stat"><span>Processing</span><strong id="processingCount">0</strong></div>
+        <div class="stat"><span>Ready for collection</span><strong id="readyCount">0</strong></div>
+      </div>
+      <div class="filters">
+        <input id="searchBox" type="search" placeholder="Search order, customer or phone">
+        <select id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="UPLOAD_PENDING">Upload pending</option>
+          <option value="ORDER_RECEIVED">Order received</option>
+          <option value="PROCESSING">Processing</option>
+          <option value="READY_FOR_COLLECTION">Ready for collection</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+      </div>
+      <div class="orders" id="ordersList"><div class="panel empty">Loading orders…</div></div>
+    </section>
+    <p class="foot">Gurukrupa Xerox &amp; Soham Multiservices · Admin access only</p>
+  </main>
+
+<script>
+(() => {
+  const SUPABASE_URL = 'https://fnsueklwnlndbismlwda.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_YeQac-5UJ8yjNb1xzyU7BA_luVBWfZ7';
+  const ADMIN_EMAIL = 'narayan.katore9@gmail.com';
+  const STATUS_LABELS = {
+    UPLOAD_PENDING:'Upload pending', ORDER_RECEIVED:'Order received',
+    PROCESSING:'Processing', READY_FOR_COLLECTION:'Ready for collection',
+    COMPLETED:'Completed', CANCELLED:'Cancelled'
+  };
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const $ = id => document.getElementById(id);
+  let orders = [];
+  let channel = null;
+  let previousIds = new Set();
+
+  function setConnection(text, live=false) {
+    $('connection').textContent = '● ' + text;
+    $('connection').classList.toggle('live', live);
+    $('liveState').textContent = live ? '● Live updates on' : '● Reconnecting…';
+  }
+  function money(value) {
+    return '₹' + Number(value || 0).toLocaleString('en-IN');
+  }
+  function safe(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function dateText(value) {
+    if (!value) return '—';
+    return new Date(value).toLocaleString('en-IN', {dateStyle:'medium',timeStyle:'short'});
+  }
+  function renderStats() {
+    $('totalCount').textContent = orders.length;
+    $('newCount').textContent = orders.filter(o => ['UPLOAD_PENDING','ORDER_RECEIVED'].includes(o.status)).length;
+    $('processingCount').textContent = orders.filter(o => o.status === 'PROCESSING').length;
+    $('readyCount').textContent = orders.filter(o => o.status === 'READY_FOR_COLLECTION').length;
+  }
+  function renderOrders() {
+    renderStats();
+    const term = $('searchBox').value.trim().toLowerCase();
+    const filter = $('statusFilter').value;
+    const filtered = orders.filter(o => {
+      const hay = [o.order_number,o.customer_name,o.customer_phone].join(' ').toLowerCase();
+      return (!term || hay.includes(term)) && (!filter || o.status === filter);
+    });
+    if (!filtered.length) {
+      $('ordersList').innerHTML = `<div class="panel empty">${orders.length ? 'No orders match this filter.' : 'No print orders have arrived yet.'}</div>`;
+      return;
+    }
+    $('ordersList').innerHTML = filtered.map(o => {
+      const files = Array.isArray(o.file_manifest) ? o.file_manifest.length : (o.file_manifest ? 1 : 0);
+      return `<article class="order">
+        <div class="order-top">
+          <div><div class="order-id">${safe(o.order_number || 'Order')}</div><div class="muted">${dateText(o.created_at)}</div></div>
+          <span class="tag">${safe(STATUS_LABELS[o.status] || o.status || 'Unknown')}</span>
+        </div>
+        <div class="details">
+          <div class="detail"><span>Customer</span><strong>${safe(o.customer_name)}</strong></div>
+          <div class="detail"><span>Phone</span><strong><a style="color:var(--text)" href="tel:${safe(o.customer_phone)}">${safe(o.customer_phone)}</a></strong></div>
+          <div class="detail"><span>Print</span><strong>A4 · ${o.print_mode === 'bw' ? 'B&W' : 'Colour'} · ${o.print_sides === 'double' ? 'Double' : 'Single'} side</strong></div>
+          <div class="detail"><span>Pages / Copies</span><strong>${safe(o.pages_per_copy)} pages · ${safe(o.copies)} copies</strong></div>
+          <div class="detail"><span>Total sheets</span><strong>${safe(o.total_sheets)}</strong></div>
+          <div class="detail"><span>Estimated total</span><strong>${money(o.estimated_total)}</strong></div>
+          <div class="detail"><span>Files recorded</span><strong>${files}</strong></div>
+          <div class="detail"><span>Payment</span><strong>${safe(o.payment_status || 'Not set')}</strong></div>
+        </div>
+        <div class="order-bottom">
+          <span class="muted">Collection: ${safe(o.collection_method || 'Shop collection')}</span>
+          <div class="status-actions">
+            <select class="status" data-status-for="${safe(o.id)}" aria-label="Update status for ${safe(o.order_number)}">
+              ${Object.entries(STATUS_LABELS).map(([key,label]) => `<option value="${key}" ${o.status===key?'selected':''}>${label}</option>`).join('')}
+            </select>
+            <button class="btn small" data-save-status="${safe(o.id)}">Save status</button>
+          </div>
+        </div>
+      </article>`;
+    }).join('');
+    document.querySelectorAll('[data-save-status]').forEach(btn => {
+      btn.addEventListener('click', () => updateStatus(btn.dataset.saveStatus, document.querySelector(`[data-status-for="${CSS.escape(btn.dataset.saveStatus)}"]`).value, btn));
+    });
+  }
+  async function loadOrders() {
+    const {data,error} = await client.from('print_orders').select('*').order('created_at',{ascending:false}).limit(200);
+    if (error) throw error;
+    orders = data || [];
+    previousIds = new Set(orders.map(o => o.id));
+    renderOrders();
+  }
+  async function updateStatus(id,status,button) {
+    button.disabled = true;
+    const oldText = button.textContent;
+    button.textContent = 'Saving…';
+    const {error} = await client.from('print_orders').update({status}).eq('id',id);
+    button.disabled = false;
+    button.textContent = oldText;
+    if (error) {
+      alert('Could not update status: ' + error.message);
+      return;
+    }
+    const item = orders.find(o => o.id === id);
+    if (item) item.status = status;
+    renderOrders();
+  }
+  function subscribeRealtime() {
+    if (channel) client.removeChannel(channel);
+    channel = client.channel('admin-print-orders')
+      .on('postgres_changes',{event:'*',schema:'public',table:'print_orders'},payload => {
+        if (payload.eventType === 'INSERT') {
+          const row = payload.new;
+          if (!previousIds.has(row.id)) {
+            previousIds.add(row.id);
+            orders.unshift(row);
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification('New print order received', {body:`${row.order_number || ''} · ${row.customer_name || 'Customer'}`});
+            }
+          }
+        } else if (payload.eventType === 'UPDATE') {
+          const index = orders.findIndex(o => o.id === payload.new.id);
+          if (index >= 0) orders[index] = payload.new;
+          else orders.unshift(payload.new);
+        } else if (payload.eventType === 'DELETE') {
+          orders = orders.filter(o => o.id !== payload.old.id);
+        }
+        renderOrders();
+      })
+      .subscribe(status => setConnection(status === 'SUBSCRIBED' ? 'Connected' : status, status === 'SUBSCRIBED'));
+  }
+  async function showDashboard(session) {
+    if (!session || session.user.email?.toLowerCase() !== ADMIN_EMAIL) {
+      await client.auth.signOut();
+      $('loginError').textContent = 'This account is not authorised for the shop admin dashboard.';
+      return;
+    }
+    $('loginPanel').classList.add('hidden');
+    $('dashboard').classList.remove('hidden');
+    setConnection('Connecting…');
+    try {
+      await loadOrders();
+      subscribeRealtime();
+      if ('Notification' in window && Notification.permission === 'default') {
+        // Permission is requested only after the admin explicitly signs in.
+        const result = await Notification.requestPermission();
+        if (result !== 'granted') console.info('Browser notifications are disabled.');
+      }
+    } catch (error) {
+      $('ordersList').innerHTML = `<div class="panel empty">Could not load orders: ${safe(error.message)}<br>Check the admin permissions and Supabase connection.</div>`;
+      setConnection('Connection error');
+    }
+  }
+  $('loginForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    $('loginError').textContent = '';
+    $('loginBtn').disabled = true;
+    $('loginBtn').textContent = 'Signing in…';
+    const {data,error} = await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    $('loginBtn').disabled = false;
+    $('loginBtn').textContent = 'Sign in securely';
+    if (error) { $('loginError').textContent = error.message; return; }
+    await showDashboard(data.session);
+  });
+  $('logoutBtn').addEventListener('click', async () => {
+    if (channel) await client.removeChannel(channel);
+    await client.auth.signOut();
+    orders = [];
+    $('dashboard').classList.add('hidden');
+    $('loginPanel').classList.remove('hidden');
+    $('password').value = '';
+    setConnection('Not connected');
+  });
+  $('searchBox').addEventListener('input',renderOrders);
+  $('statusFilter').addEventListener('change',renderOrders);
+
+  client.auth.getSession().then(({data}) => {
+    if (data.session) showDashboard(data.session);
+  });
+  client.auth.onAuthStateChange((_event,session) => {
+    if (!session) return;
+    if (session.user.email?.toLowerCase() === ADMIN_EMAIL && $('dashboard').classList.contains('hidden')) showDashboard(session);
+  });
+})();
+</script>
+</body>
+</html>
