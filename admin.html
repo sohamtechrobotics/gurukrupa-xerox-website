@@ -139,7 +139,9 @@
     const processing = orders.filter(o => o.status === 'PROCESSING').length;
     const ready = orders.filter(o => o.status === 'READY_FOR_COLLECTION').length;
     const completed = orders.filter(o => o.status === 'COMPLETED').length;
-    const pendingAmount = orders.filter(o => !['PAID','REFUNDED'].includes(String(o.payment_status || '').toUpperCase()))
+    // Only orders explicitly marked PENDING belong in the payment-pending total.
+    // NOT_REQUIRED_YET means payment has not been enabled/initiated for that order.
+    const pendingAmount = orders.filter(o => String(o.payment_status || '').toUpperCase() === 'PENDING')
       .reduce((sum,o) => sum + Number(o.estimated_total || 0),0);
     $('todayOrders').textContent = todays.length;
     $('todaySales').textContent = money(todaySales);
@@ -315,3 +317,4 @@
 </script>
 </body>
 </html>
+
