@@ -1,15 +1,13 @@
 
-/* =====================================================
-   GURUKRUPA XEROX - MULTILINGUAL WEBSITE
+/* =========================================================
+   GURUKRUPA XEROX & SOHAM MULTISERVICES
+   Complete Multilingual Website Script
    English | Marathi | Hindi
-   ===================================================== */
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Homepage translations are handled here; inner pages use the shared handler below.
-  if (!document.querySelector(".hero")) return;
-
-  const translations = {
+  const homeTranslations = {
     en: {
       nav: ["Home", "Services", "About", "Gallery", "Contact"],
       heroEyebrow: "YOUR TRUSTED MULTISERVICE CENTRE",
@@ -111,13 +109,13 @@ document.addEventListener("DOMContentLoaded", () => {
       disclaimer: "तुमची चौकशी WhatsApp मध्ये उघडेल. पासवर्ड, OTP किंवा संवेदनशील आर्थिक माहिती पाठवू नका.",
       findUs: "आम्हाला भेट द्या",
       mapTitle: '<span>आमच्या केंद्राला</span> भेट द्या.',
-      mapDescription: "प्लॉट नं. ४८, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – ४३११४.",
+      mapDescription: "प्लॉट नं. ४८, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – ४३१११४.",
       directions: "Google Maps वर मार्ग पहा ↗",
       quickLinks: "महत्त्वाचे दुवे",
       ourServices: "आमच्या सेवा",
       getInTouch: "संपर्क माहिती",
       footerDescription: "प्रत्येक सेवा. एकाच ठिकाणी. तुमचे विश्वासार्ह स्थानिक सेवा केंद्र.",
-      footerAddress: "प्लॉट नं. ४८, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – ४३११४",
+      footerAddress: "प्लॉट नं. ४८, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – ४३१११४",
       footerCopyright: "सर्व हक्क राखीव.",
       footerTagline: "काळजीपूर्वक डिझाइन. सोयीसाठी निर्मित.",
       chat: "आमच्याशी बोला",
@@ -188,295 +186,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const languageSelect = document.getElementById("languageSelect");
+  /* =====================================================
+     INNER PAGE TRANSLATIONS
+     ===================================================== */
 
-  function setText(selector, value) {
-    const element = document.querySelector(selector);
-    if (element && value !== undefined) element.innerHTML = value;
-  }
-
-  function setPlainText(selector, value) {
-    const element = document.querySelector(selector);
-    if (!element || value === undefined) return;
-
-    const childElements = Array.from(element.children);
-    if (!childElements.length) {
-      element.textContent = value;
-      return;
-    }
-
-    Array.from(element.childNodes).forEach(node => {
-      if (node.nodeType === Node.TEXT_NODE) node.remove();
-    });
-    element.appendChild(document.createTextNode(value));
-  }
-
-  function setLanguage(language) {
-    const t = translations[language] || translations.en;
-    document.documentElement.lang = language;
-
-    document.querySelectorAll("#navLinks a").forEach((link, index) => {
-      if (t.nav[index]) link.textContent = t.nav[index];
-    });
-
-    setPlainText(".eyebrow", t.heroEyebrow);
-    setText(".hero h1", t.heroTitle);
-    setPlainText(".hero-description", t.heroDescription);
-    setText(".hero-buttons .btn-primary", t.explore);
-    setPlainText(".hero-buttons .btn-secondary", t.contact);
-
-    document.querySelectorAll(".hero-trust span").forEach((el, i) => {
-      if (t.trust[i]) el.textContent = t.trust[i];
-    });
-
-    setPlainText(".card-back span:last-child", t.documentServices);
-    setPlainText(".document-tag", t.onePlace);
-    setPlainText(".floating-badge", t.simple);
-
-    document.querySelectorAll(".quick-info div span").forEach((el, i) => {
-      if (t.quick[i]) el.textContent = t.quick[i];
-    });
-
-    setPlainText(".print-content .section-label", t.printLabel);
-    setText(".print-content h2", t.printTitle);
-    setPlainText(".print-content > p:not(.print-note)", t.printDescription);
-
-    document.querySelectorAll(".print-features p").forEach((el, i) => {
-      if (t.printSteps[i]) el.textContent = t.printSteps[i];
-    });
-
-    setText(".print-content .btn-light", t.printButton);
-    setPlainText(".print-note", t.printNote);
-
-    setPlainText(".why-section .section-label", t.whyLabel);
-    setText(".why-section .section-heading h2", t.whyTitle);
-    setPlainText(".why-section .section-heading > p", t.whyDescription);
-
-    document.querySelectorAll(".why-card").forEach((card, i) => {
-      if (t.whyCards[i]) {
-        const heading = card.querySelector("h3");
-        const paragraph = card.querySelector("p");
-        if (heading) heading.textContent = t.whyCards[i][0];
-        if (paragraph) paragraph.textContent = t.whyCards[i][1];
-      }
-    });
-
-    setPlainText(".enquiry-heading .section-label", t.enquiryLabel);
-    setText(".enquiry-heading h2", t.enquiryTitle);
-    setPlainText(".enquiry-heading p", t.enquiryDescription);
-
-    const labels = document.querySelectorAll(".enquiry-form label");
-    const labelTexts = [t.name, t.mobile, t.selectService, t.visitDate, t.requirements];
-    labels.forEach((label, i) => {
-      if (labelTexts[i]) label.textContent = labelTexts[i];
-    });
-
-    const serviceSelect = document.getElementById("serviceType");
-    if (serviceSelect) {
-      serviceSelect.options[0].textContent = t.chooseService;
-      t.services.forEach((service, i) => {
-        if (serviceSelect.options[i + 1]) {
-          serviceSelect.options[i + 1].textContent = service;
-        }
-      });
-    }
-
-    const messageField = document.getElementById("enquiryMessage");
-    if (messageField) messageField.placeholder = t.messagePlaceholder;
-
-    setText(".enquiry-submit", t.submit);
-    setPlainText(".form-disclaimer", t.disclaimer);
-
-    setPlainText(".map-heading .section-label", t.findUs);
-    setText(".map-heading h2", t.mapTitle);
-    setPlainText(".map-heading p", t.mapDescription);
-    setText(".map-directions", t.directions);
-
-    const footerHeadings = document.querySelectorAll(
-      ".footer-links > strong, .footer-contact > strong"
-    );
-    const footerHeadingTexts = [t.quickLinks, t.ourServices, t.getInTouch];
-
-    footerHeadings.forEach((el, i) => {
-      if (footerHeadingTexts[i]) el.textContent = footerHeadingTexts[i];
-    });
-
-    setPlainText(".footer-brand > p", t.footerDescription);
-
-    const footerAddress = document.querySelector(".footer-contact p");
-    if (footerAddress) footerAddress.textContent = t.footerAddress;
-
-    const footerBottom = document.querySelector(".footer-bottom");
-    if (footerBottom) {
-      const spans = footerBottom.querySelectorAll("span");
-      if (spans[0]) {
-        spans[0].innerHTML =
-          `© <span id="currentYear">${new Date().getFullYear()}</span> ` +
-          `Gurukrupa Xerox And Soham Multiservices. ${t.footerCopyright}`;
-      }
-      if (spans[1]) spans[1].textContent = t.footerTagline;
-    }
-
-    setPlainText(".print-main-card > strong", t.document);
-    setPlainText(".file-size", t.ready);
-    setPlainText(".print-ready", t.preview);
-    setPlainText(".whatsapp-label", t.chat);
-
-    if (languageSelect) languageSelect.value = language;
-
-    try {
-      localStorage.setItem("gurukrupa-language", language);
-    } catch (error) {
-      // Language still works if browser storage is unavailable.
-    }
-  }
-
-  let savedLanguage = "en";
-
-  try {
-    savedLanguage = localStorage.getItem("gurukrupa-language") || "en";
-  } catch (error) {
-    savedLanguage = "en";
-  }
-
-  if (!translations[savedLanguage]) savedLanguage = "en";
-  setLanguage(savedLanguage);
-
-  if (languageSelect) {
-    languageSelect.addEventListener("change", event => {
-      setLanguage(event.target.value);
-    });
-  }
-
-  const menuToggle = document.getElementById("menuToggle");
-  const navLinks = document.getElementById("navLinks");
-
-  if (menuToggle && navLinks) {
-    const closeMenu = () => {
-      navLinks.classList.remove("active");
-      menuToggle.classList.remove("active");
-      menuToggle.setAttribute("aria-expanded", "false");
-      menuToggle.setAttribute("aria-label", translations[
-        document.documentElement.lang
-      ].mobileMenu);
-    };
-
-    menuToggle.addEventListener("click", () => {
-      const isOpen = navLinks.classList.toggle("active");
-      menuToggle.classList.toggle("active", isOpen);
-      menuToggle.setAttribute("aria-expanded", String(isOpen));
-      menuToggle.setAttribute(
-        "aria-label",
-        isOpen
-          ? translations[document.documentElement.lang].closeMenu
-          : translations[document.documentElement.lang].mobileMenu
-      );
-    });
-
-    navLinks.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", closeMenu);
-    });
-
-    document.addEventListener("click", event => {
-      if (!navLinks.contains(event.target) &&
-          !menuToggle.contains(event.target)) {
-        closeMenu();
-      }
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") {
-        closeMenu();
-        menuToggle.focus();
-      }
-    });
-  }
-
-  const currentYear = document.getElementById("currentYear");
-  if (currentYear) currentYear.textContent = new Date().getFullYear();
-
-  const preferredDate = document.getElementById("preferredDate");
-
-  if (preferredDate) {
-    const today = new Date();
-    const localDate = new Date(
-      today.getTime() - today.getTimezoneOffset() * 60000
-    ).toISOString().split("T")[0];
-
-    preferredDate.min = localDate;
-  }
-
-  const enquiryForm = document.getElementById("enquiryForm");
-
-  if (enquiryForm) {
-    enquiryForm.addEventListener("submit", event => {
-      event.preventDefault();
-
-      if (!enquiryForm.reportValidity()) return;
-
-      const name = document.getElementById("customerName").value.trim();
-      const phone = document.getElementById("customerPhone").value.trim();
-      const service = document.getElementById("serviceType").selectedOptions[0].text;
-      const date = document.getElementById("preferredDate").value;
-      const message = document.getElementById("enquiryMessage").value.trim();
-
-      const language = document.documentElement.lang;
-      const messageHeading = {
-        en: "New Service Enquiry",
-        mr: "नवीन सेवा चौकशी",
-        hi: "नई सेवा पूछताछ"
-      };
-
-      const whatsappMessage = [
-        "Hello Gurukrupa Xerox And Soham Multiservices!",
-        "",
-        "*" + (messageHeading[language] || messageHeading.en) + "*",
-        "",
-        "*Name:* " + name,
-        "*Mobile:* " + phone,
-        "*Service:* " + service,
-        "*Preferred Visit Date:* " + (date || "Not specified"),
-        "*Requirements:* " + message,
-        "",
-        "Please contact me regarding this enquiry."
-      ].join("\n");
-
-      const whatsappURL =
-        "https://wa.me/917745062299?text=" +
-        encodeURIComponent(whatsappMessage);
-
-      window.open(whatsappURL, "_blank", "noopener,noreferrer");
-    });
-  }
-
-});
-
-/* =========================================================
-   INNER PAGES — PAGE-AWARE TRANSLATION HANDLER
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.querySelector(".hero")) return;
-
-  const page = location.pathname.split("/").pop() || "index.html";
-  const $ = (selector, root = document) => root.querySelector(selector);
-  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-
-  const put = (selector, value, root = document) => {
-    const el = $(selector, root);
-    if (el && value !== undefined) el.textContent = value;
-  };
-
-  const setList = (selector, values, root = document) => {
-    $$(selector, root).forEach((el, i) => {
-      if (values[i] !== undefined) el.textContent = values[i];
-    });
-  };
-
-  const T = {
+  const inner = {
     en: {
       nav: ["Home", "Services", "About", "Gallery", "Contact"],
-      print: "Print Online",
+      navPrint: "Print Online",
       footerHead: ["QUICK LINKS", "OUR SERVICES", "GET IN TOUCH"],
       footerQuick: ["Home", "Services", "About Us", "Gallery", "Contact", "Print Online"],
       footerServices: ["Xerox & Printing", "Online Form Filling", "Income Tax Work", "Government Services", "Data Entry"],
@@ -489,12 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Gurukrupa Xerox And Soham Multiservices is a local service centre based in New Bhokardan, Maharashtra. We bring together everyday printing, documentation, digital assistance and business support services in one convenient destination.",
           "Our aim is to make essential services easier to access for students, individuals, families, farmers and local businesses."
         ],
-        points: [
-          "Multiple services under one roof",
-          "Support for individuals and businesses",
-          "Convenient local service in Bhokardan",
-          "Digital and documentation assistance"
-        ],
+        points: ["Multiple services under one roof", "Support for individuals and businesses", "Convenient local service in Bhokardan", "Digital and documentation assistance"],
         link: "Explore our services ↗",
         approach: "OUR APPROACH",
         why: "Built around your everyday needs.",
@@ -575,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     mr: {
       nav: ["मुख्यपृष्ठ", "सेवा", "आमच्याबद्दल", "गॅलरी", "संपर्क"],
-      print: "ऑनलाइन प्रिंटिंग",
+      navPrint: "ऑनलाइन प्रिंटिंग",
       footerHead: ["महत्त्वाचे दुवे", "आमच्या सेवा", "संपर्क साधा"],
       footerQuick: ["मुख्यपृष्ठ", "सेवा", "आमच्याबद्दल", "गॅलरी", "संपर्क", "ऑनलाइन प्रिंटिंग"],
       footerServices: ["झेरॉक्स आणि प्रिंटिंग", "ऑनलाइन फॉर्म भरणे", "आयकरविषयक काम", "सरकारी सेवा", "डेटा एन्ट्री"],
@@ -588,12 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "गुरुकृपा झेरॉक्स अँड सोहम मल्टीसर्व्हिसेस हे महाराष्ट्रातील न्यू भोकरदन येथे असलेले स्थानिक सेवा केंद्र आहे. दैनंदिन प्रिंटिंग, कागदपत्रे, डिजिटल सहाय्य आणि व्यवसायविषयक सेवा आम्ही एकाच सोयीस्कर ठिकाणी उपलब्ध करून देतो.",
           "विद्यार्थी, व्यक्ती, कुटुंबे, शेतकरी आणि स्थानिक व्यवसायांना आवश्यक सेवा सहज उपलब्ध करून देणे हे आमचे उद्दिष्ट आहे."
         ],
-        points: [
-          "अनेक सेवा एकाच छताखाली",
-          "व्यक्ती आणि व्यवसायांसाठी सहाय्य",
-          "भोकरदनमध्ये सोयीस्कर स्थानिक सेवा",
-          "डिजिटल आणि कागदपत्रविषयक सहाय्य"
-        ],
+        points: ["अनेक सेवा एकाच छताखाली", "व्यक्ती आणि व्यवसायांसाठी सहाय्य", "भोकरदनमध्ये सोयीस्कर स्थानिक सेवा", "डिजिटल आणि कागदपत्रविषयक सहाय्य"],
         link: "आमच्या सेवा पहा ↗",
         approach: "आमची कार्यपद्धती",
         why: "तुमच्या दैनंदिन गरजांनुसार सेवा.",
@@ -674,7 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     hi: {
       nav: ["होम", "सेवाएँ", "हमारे बारे में", "गैलरी", "संपर्क"],
-      print: "ऑनलाइन प्रिंटिंग",
+      navPrint: "ऑनलाइन प्रिंटिंग",
       footerHead: ["त्वरित लिंक", "हमारी सेवाएँ", "संपर्क करें"],
       footerQuick: ["होम", "सेवाएँ", "हमारे बारे में", "गैलरी", "संपर्क", "ऑनलाइन प्रिंटिंग"],
       footerServices: ["ज़ेरॉक्स और प्रिंटिंग", "ऑनलाइन फॉर्म भरना", "आयकर संबंधी कार्य", "सरकारी सेवाएँ", "डेटा एंट्री"],
@@ -687,12 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "गुरुकृपा ज़ेरॉक्स एंड सोहम मल्टीसर्विसेज महाराष्ट्र के न्यू भोकरदन में स्थित एक स्थानीय सेवा केंद्र है। हम रोज़मर्रा की प्रिंटिंग, दस्तावेज़, डिजिटल सहायता और व्यावसायिक सेवाएँ एक ही सुविधाजनक स्थान पर उपलब्ध कराते हैं।",
           "विद्यार्थियों, व्यक्तियों, परिवारों, किसानों और स्थानीय व्यवसायों के लिए आवश्यक सेवाएँ आसानी से उपलब्ध कराना हमारा उद्देश्य है।"
         ],
-        points: [
-          "कई सेवाएँ एक ही छत के नीचे",
-          "व्यक्तियों और व्यवसायों के लिए सहायता",
-          "भोकरदन में सुविधाजनक स्थानीय सेवा",
-          "डिजिटल और दस्तावेज़ संबंधी सहायता"
-        ],
+        points: ["कई सेवाएँ एक ही छत के नीचे", "व्यक्तियों और व्यवसायों के लिए सहायता", "भोकरदन में सुविधाजनक स्थानीय सेवा", "डिजिटल और दस्तावेज़ संबंधी सहायता"],
         link: "हमारी सेवाएँ देखें ↗",
         approach: "हमारा दृष्टिकोण",
         why: "आपकी रोज़मर्रा की ज़रूरतों के अनुसार।",
@@ -728,7 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ["आयकर संबंधी कार्य", "आयकर संबंधी कार्यों, जानकारी दर्ज करने और आवश्यक दस्तावेज़ों में सहायता।"],
           ["सरकारी सेवाएँ", "विभिन्न सरकारी आवेदनों, ऑनलाइन प्रक्रियाओं और डिजिटल सेवाओं में सहायता।"],
           ["डेटा एंट्री सेवाएँ", "डेटा एंट्री, दस्तावेज़ तैयार करने और डिजिटल जानकारी प्रबंधन में सहायता।"],
-          ["व्यावसायिक सहायता", "स्थानीय व्यवसायों के लिए डिजिटल कार्य, टाइपिंग और दस्तावेज़ संबंधी व्यावहारिक सहायता."]
+          ["व्यावसायिक सहायता", "स्थानीय व्यवसायों के लिए डिजिटल कार्य, टाइपिंग और दस्तावेज़ संबंधी व्यावहारिक सहायता।"]
         ],
         enquire: "पूछताछ करें ↗",
         coming: "जल्द ऑनलाइन",
@@ -766,11 +468,54 @@ document.addEventListener("DOMContentLoaded", () => {
           ["अपलोड", "PDF, इमेज या समर्थित दस्तावेज़ फाइल भेजें।"],
           ["जाँचें", "पुष्टि करने से पहले बदली हुई प्रिंट-तैयार फाइल और कीमत देखें।"],
           ["प्राप्त करें", "सिस्टम शुरू होने पर भुगतान पूरा करें और दुकान से ऑर्डर लें।"],
-          ["ट्रैक करें", "ऑर्डर अपडेट और प्राप्ति की पुष्टि की प्रस्तावित सुविधा."]
+          ["ट्रैक करें", "ऑर्डर अपडेट और प्राप्ति की पुष्टि की प्रस्तावित सुविधा।"]
         ]
       }
     }
   };
+
+  /* =====================================================
+     COMMON HELPERS
+     ===================================================== */
+
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+  function put(selector, value, root = document) {
+    const el = $(selector, root);
+    if (el && value !== undefined) el.textContent = value;
+  }
+
+  function putHTML(selector, value, root = document) {
+    const el = $(selector, root);
+    if (el && value !== undefined) el.innerHTML = value;
+  }
+
+  function setList(selector, values, root = document) {
+    $$(selector, root).forEach((el, i) => {
+      if (values[i] !== undefined) el.textContent = values[i];
+    });
+  }
+
+  function saveLanguage(language) {
+    document.documentElement.lang = language;
+    try {
+      localStorage.setItem("gurukrupa-language", language);
+    } catch (_) {}
+  }
+
+  function getSavedLanguage() {
+    try {
+      const saved = localStorage.getItem("gurukrupa-language");
+      return ["en", "mr", "hi"].includes(saved) ? saved : "en";
+    } catch (_) {
+      return "en";
+    }
+  }
+
+  /* =====================================================
+     LANGUAGE SELECTOR
+     ===================================================== */
 
   let languageSelect = $("#languageSelect");
 
@@ -785,7 +530,8 @@ document.addEventListener("DOMContentLoaded", () => {
         '<select id="languageSelect" aria-label="Choose website language">' +
         '<option value="en">EN</option>' +
         '<option value="mr">मराठी</option>' +
-        '<option value="hi">हिन्दी</option></select>';
+        '<option value="hi">हिन्दी</option>' +
+        '</select>';
 
       const printLink = $(".nav-print", actions);
       actions.insertBefore(wrap, printLink || actions.firstChild);
@@ -793,14 +539,139 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function translate(lang) {
-    const t = T[lang] || T.en;
-    document.documentElement.lang = lang;
+  /* =====================================================
+     HOMEPAGE TRANSLATION
+     ===================================================== */
+
+  function translateHome(language) {
+    const t = homeTranslations[language] || homeTranslations.en;
+
+    saveLanguage(language);
 
     setList("#navLinks a", t.nav);
 
+    put(".eyebrow", t.heroEyebrow);
+    putHTML(".hero h1", t.heroTitle);
+    put(".hero-description", t.heroDescription);
+    putHTML(".hero-buttons .btn-primary", t.explore);
+    put(".hero-buttons .btn-secondary", t.contact);
+
+    setList(".hero-trust span", t.trust);
+
+    put(".card-back span:last-child", t.documentServices);
+    put(".document-tag", t.onePlace);
+
+    // Preserve decorative children inside the floating badge.
+    const badge = $(".floating-badge");
+    if (badge) {
+      const textNode = [...badge.childNodes].find(
+        node => node.nodeType === Node.TEXT_NODE
+      );
+      if (textNode) {
+        textNode.textContent = t.simple;
+      } else {
+        badge.appendChild(document.createTextNode(t.simple));
+      }
+    }
+
+    setList(".quick-info div span", t.quick);
+
+    put(".print-content .section-label", t.printLabel);
+    putHTML(".print-content h2", t.printTitle);
+    put(".print-content > p:not(.print-note)", t.printDescription);
+    setList(".print-features p", t.printSteps);
+    putHTML(".print-content .btn-light", t.printButton);
+    put(".print-note", t.printNote);
+
+    put(".why-section .section-label", t.whyLabel);
+    putHTML(".why-section .section-heading h2", t.whyTitle);
+    put(".why-section .section-heading > p", t.whyDescription);
+
+    $$(".why-card").forEach((card, i) => {
+      if (!t.whyCards[i]) return;
+      put("h3", t.whyCards[i][0], card);
+      put("p", t.whyCards[i][1], card);
+    });
+
+    put(".enquiry-heading .section-label", t.enquiryLabel);
+    putHTML(".enquiry-heading h2", t.enquiryTitle);
+    put(".enquiry-heading p", t.enquiryDescription);
+
+    const labels = $$(".enquiry-form label");
+    const labelTexts = [t.name, t.mobile, t.selectService, t.visitDate, t.requirements];
+
+    labels.forEach((label, i) => {
+      if (labelTexts[i]) label.textContent = labelTexts[i];
+    });
+
+    const serviceSelect = $("#serviceType");
+    if (serviceSelect) {
+      if (serviceSelect.options[0]) {
+        serviceSelect.options[0].textContent = t.chooseService;
+      }
+      t.services.forEach((service, i) => {
+        if (serviceSelect.options[i + 1]) {
+          serviceSelect.options[i + 1].textContent = service;
+        }
+      });
+    }
+
+    const messageField = $("#enquiryMessage");
+    if (messageField) messageField.placeholder = t.messagePlaceholder;
+
+    putHTML(".enquiry-submit", t.submit);
+    put(".form-disclaimer", t.disclaimer);
+
+    put(".map-heading .section-label", t.findUs);
+    putHTML(".map-heading h2", t.mapTitle);
+    put(".map-heading p", t.mapDescription);
+    putHTML(".map-directions", t.directions);
+
+    const footerHeadings = $$(".footer-links > strong, .footer-contact > strong");
+    [t.quickLinks, t.ourServices, t.getInTouch].forEach((value, i) => {
+      if (footerHeadings[i]) footerHeadings[i].textContent = value;
+    });
+
+    put(".footer-brand > p", t.footerDescription);
+    put(".footer-contact p", t.footerAddress);
+
+    const bottom = $(".footer-bottom");
+    if (bottom) {
+      const spans = $$(":scope > span", bottom);
+      if (spans[0]) {
+        spans[0].innerHTML =
+          `© <span id="currentYear">${new Date().getFullYear()}</span> ` +
+          `Gurukrupa Xerox And Soham Multiservices. ${t.footerCopyright}`;
+      }
+      if (spans[1]) spans[1].textContent = t.footerTagline;
+    }
+
+    put(".print-main-card > strong", t.document);
+    put(".file-size", t.ready);
+    put(".print-ready", t.preview);
+    put(".whatsapp-label", t.chat);
+
+    if (languageSelect) languageSelect.value = language;
+  }
+
+  /* =====================================================
+     INNER PAGE TRANSLATION
+     ===================================================== */
+
+  function translateInner(language) {
+    const t = inner[language] || inner.en;
+    const page = location.pathname.split("/").pop() || "index.html";
+
+    saveLanguage(language);
+
+    setList("#navLinks a", t.nav);
+
+    // FIX 1: Use navPrint, NOT t.print.
+    // t.print is an object containing Print Online page translations.
     const printLink = $(".nav-print");
-    if (printLink) printLink.innerHTML = `${t.print} <span>↗</span>`;
+    if (printLink) {
+      printLink.innerHTML = `${t.navPrint} <span>↗</span>`;
+    }
 
     const footerGroups = $$(".footer-links");
 
@@ -817,14 +688,16 @@ document.addEventListener("DOMContentLoaded", () => {
     put(".footer-contact > strong", t.footerHead[2]);
     put(".footer-brand > p", t.footerDesc);
 
-    const bottom = $(".footer-bottom");
-    if (bottom) {
-      const spans = $$(":scope > span", bottom);
+    const footerBottom = $(".footer-bottom");
+    if (footerBottom) {
+      const spans = $$(":scope > span", footerBottom);
       if (spans[1]) spans[1].textContent = t.footerTag;
-
-      const year = $("#currentYear");
-      if (year) year.textContent = new Date().getFullYear();
     }
+
+    const year = $("#currentYear");
+    if (year) year.textContent = new Date().getFullYear();
+
+    /* ABOUT PAGE */
 
     if (page === "about.html") {
       const d = t.about;
@@ -832,20 +705,45 @@ document.addEventListener("DOMContentLoaded", () => {
       put(".about-content > .section-label", d.label);
       put(".about-content > h2", d.title);
       setList(".about-content > p", d.p);
-      setList(".about-point-text", d.points);
       put(".about-content > .text-link", d.link);
+
+      // FIX 2: Target the actual About points rows.
+      // Supports rows containing an icon followed by a text element.
+      const pointRows = $$(".about-points > *");
+
+      pointRows.forEach((row, i) => {
+        if (d.points[i] === undefined) return;
+
+        const textElement = row.querySelector(
+          ".about-point-text, .point-text, p, strong, span:last-child"
+        );
+
+        if (textElement) {
+          textElement.textContent = d.points[i];
+        } else {
+          // If the row has an icon and a text wrapper, use its last child.
+          const lastChild = row.lastElementChild;
+          if (lastChild) {
+            lastChild.textContent = d.points[i];
+          } else {
+            row.textContent = d.points[i];
+          }
+        }
+      });
 
       put(".why-section .section-label", d.approach);
       put(".why-section .section-heading h2", d.why);
       put(".why-section .section-heading > p", d.whyP);
 
-      $$(".why-grid .why-card").forEach((card, i) => {
-        const item = d.cards[i];
-        if (!item) return;
-        put("h3", item[0], card);
-        put("p", item[1], card);
+      // Limit this to the cards in the lower About section.
+      $$(".why-section .why-card").forEach((card, i) => {
+        if (!d.cards[i]) return;
+        put("h3", d.cards[i][0], card);
+        put("p", d.cards[i][1], card);
       });
     }
+
+    /* GALLERY PAGE */
 
     if (page === "gallery.html") {
       const d = t.gallery;
@@ -855,15 +753,16 @@ document.addEventListener("DOMContentLoaded", () => {
       put(".section-heading > p", d.desc);
 
       $$(".gallery-item").forEach((card, i) => {
-        const item = d.cards[i];
-        if (!item) return;
-        put("strong", item[0], card);
-        put("small", item[1], card);
+        if (!d.cards[i]) return;
+        put("strong", d.cards[i][0], card);
+        put("small", d.cards[i][1], card);
       });
 
       const note = $(".gallery-grid + p");
       if (note) note.textContent = d.note;
     }
+
+    /* SERVICES PAGE */
 
     if (page === "services.html") {
       const d = t.services;
@@ -873,10 +772,9 @@ document.addEventListener("DOMContentLoaded", () => {
       put(".services-section .section-heading > p", d.desc);
 
       $$(".service-card").forEach((card, i) => {
-        const item = d.cards[i];
-        if (!item) return;
-        put("h3", item[0], card);
-        put("p", item[1], card);
+        if (!d.cards[i]) return;
+        put("h3", d.cards[i][0], card);
+        put("p", d.cards[i][1], card);
         put("a", d.enquire, card);
       });
 
@@ -886,6 +784,8 @@ document.addEventListener("DOMContentLoaded", () => {
       put(".print-content .btn-light", d.discover);
       put(".print-note", d.note);
     }
+
+    /* CONTACT PAGE */
 
     if (page === "contact.html") {
       const d = t.contact;
@@ -908,13 +808,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const bottom = $(".contact-bottom");
-
       if (bottom) {
         put("strong", d.bottom, bottom);
         put("span", d.bottomDesc, bottom);
         put(".whatsapp-button", d.whatsapp, bottom);
       }
     }
+
+    /* PRINT ONLINE PAGE */
 
     if (page === "print-online.html") {
       const d = t.print;
@@ -934,50 +835,151 @@ document.addEventListener("DOMContentLoaded", () => {
       put(".section-heading > p", d.howDesc);
 
       $$(".why-grid .why-card").forEach((card, i) => {
-        const item = d.cards[i];
-        if (!item) return;
-        put("h3", item[0], card);
-        put("p", item[1], card);
+        if (!d.cards[i]) return;
+        put("h3", d.cards[i][0], card);
+        put("p", d.cards[i][1], card);
       });
     }
 
-    if (languageSelect) languageSelect.value = lang;
-
-    try {
-      localStorage.setItem("gurukrupa-language", lang);
-    } catch (_) {}
+    if (languageSelect) languageSelect.value = language;
   }
 
-  let saved = "en";
+  /* =====================================================
+     INITIALISE LANGUAGE
+     ===================================================== */
 
-  try {
-    saved = localStorage.getItem("gurukrupa-language") || "en";
-  } catch (_) {}
+  const isHomePage =
+    document.querySelector(".hero") !== null;
 
-  if (!T[saved]) saved = "en";
+  function applyLanguage(language) {
+    if (isHomePage) {
+      translateHome(language);
+    } else {
+      translateInner(language);
+    }
+  }
 
-  translate(saved);
+  const initialLanguage = getSavedLanguage();
+  applyLanguage(initialLanguage);
 
   if (languageSelect) {
-    languageSelect.addEventListener("change", e => translate(e.target.value));
-  }
-
-  const toggle = $("#menuToggle");
-  const nav = $("#navLinks");
-
-  if (toggle && nav) {
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("active");
-      toggle.classList.toggle("active", open);
-      toggle.setAttribute("aria-expanded", String(open));
-    });
-
-    nav.querySelectorAll("a").forEach(a => {
-      a.addEventListener("click", () => {
-        nav.classList.remove("active");
-        toggle.classList.remove("active");
-        toggle.setAttribute("aria-expanded", "false");
-      });
+    languageSelect.addEventListener("change", event => {
+      applyLanguage(event.target.value);
     });
   }
+
+  /* =====================================================
+     MOBILE NAVIGATION
+     ===================================================== */
+
+  const menuToggle = $("#menuToggle");
+  const navLinks = $("#navLinks");
+
+  if (menuToggle && navLinks) {
+    const closeMenu = () => {
+      navLinks.classList.remove("active");
+      menuToggle.classList.remove("active");
+      menuToggle.setAttribute("aria-expanded", "false");
+    };
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("active");
+      menuToggle.classList.toggle("active", isOpen);
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", closeMenu);
+    });
+
+    document.addEventListener("click", event => {
+      if (
+        !navLinks.contains(event.target) &&
+        !menuToggle.contains(event.target)
+      ) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeMenu();
+        menuToggle.focus();
+      }
+    });
+  }
+
+  /* =====================================================
+     CURRENT YEAR
+     ===================================================== */
+
+  const currentYear = $("#currentYear");
+  if (currentYear) {
+    currentYear.textContent = new Date().getFullYear();
+  }
+
+  /* =====================================================
+     PREVENT PAST APPOINTMENT DATES
+     ===================================================== */
+
+  const preferredDate = $("#preferredDate");
+
+  if (preferredDate) {
+    const today = new Date();
+    const localDate = new Date(
+      today.getTime() - today.getTimezoneOffset() * 60000
+    ).toISOString().split("T")[0];
+
+    preferredDate.min = localDate;
+  }
+
+  /* =====================================================
+     WHATSAPP ENQUIRY FORM
+     ===================================================== */
+
+  const enquiryForm = $("#enquiryForm");
+
+  if (enquiryForm) {
+    enquiryForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      if (!enquiryForm.reportValidity()) return;
+
+      const name = $("#customerName")?.value.trim() || "";
+      const phone = $("#customerPhone")?.value.trim() || "";
+      const serviceSelect = $("#serviceType");
+      const service = serviceSelect?.selectedOptions[0]?.text || "";
+      const date = $("#preferredDate")?.value || "";
+      const message = $("#enquiryMessage")?.value.trim() || "";
+
+      const language = document.documentElement.lang;
+
+      const messageHeading = {
+        en: "New Service Enquiry",
+        mr: "नवीन सेवा चौकशी",
+        hi: "नई सेवा पूछताछ"
+      };
+
+      const whatsappMessage = [
+        "Hello Gurukrupa Xerox & Soham Multiservices!",
+        "",
+        "*" + (messageHeading[language] || messageHeading.en) + "*",
+        "",
+        "*Name:* " + name,
+        "*Mobile:* " + phone,
+        "*Service:* " + service,
+        "*Preferred Visit Date:* " + (date || "Not specified"),
+        "*Requirements:* " + message,
+        "",
+        "Please contact me regarding this enquiry."
+      ].join("\n");
+
+      const whatsappURL =
+        "https://wa.me/917745062299?text=" +
+        encodeURIComponent(whatsappMessage);
+
+      window.open(whatsappURL, "_blank", "noopener,noreferrer");
+    });
+  }
+
 });
