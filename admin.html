@@ -7,24 +7,28 @@
   <title>Gurukrupa Xerox — Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root{color-scheme:dark;--bg:#0b1220;--panel:#111d31;--panel2:#16243b;--line:#293954;--text:#f4f6fb;--muted:#9eacc2;--gold:#d8b56d;--green:#54c49a;--red:#f17d7d}
-    *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#0b1220,#101b2e 60%,#0b1220);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
-    button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:28px 0 60px}
-    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:13px}.mark{width:44px;height:44px;border:1px solid #8d7447;border-radius:13px;display:grid;place-items:center;color:var(--gold);font-weight:800;font-size:19px}.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-    .pill{border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--muted);font-size:12px}.live{color:var(--green);border-color:#28634f}
-    .panel{background:rgba(17,29,49,.94);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 50px #0003}
-    .login{max-width:420px;margin:8vh auto}.login h2{margin:0 0 6px;font-size:24px}.sub{color:var(--muted);margin:0 0 22px}
-    label{display:block;color:#c4cede;font-size:13px;margin:14px 0 6px}input,select{width:100%;background:#0b1526;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px 13px;outline:none}input:focus,select:focus{border-color:var(--gold)}
-    .btn{border:0;border-radius:10px;background:var(--gold);color:#151b25;font-weight:750;padding:11px 16px}.btn:disabled{opacity:.55;cursor:wait}.btn.secondary{background:#24344e;color:var(--text);border:1px solid var(--line)}.btn.small{padding:7px 10px;font-size:12px}
+    :root{color-scheme:dark;--bg:#080e19;--sidebar:#0d1727;--panel:#111e31;--panel2:#17263c;--line:#293b56;--text:#f5f2eb;--muted:#9aa9bd;--gold:#d7b36b;--gold2:#f0d69b;--green:#63c79f;--red:#f18484;--blue:#8eb8e8}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 78% -10%,#26344a 0,transparent 38%),linear-gradient(145deg,#080e19,#0d1727 55%,#080e19);color:var(--text);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+    button,input,select{font:inherit}button{cursor:pointer}.wrap{width:min(1320px,calc(100% - 42px));margin:0 auto;padding:26px 0 54px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:30px;padding-bottom:20px;border-bottom:1px solid #ffffff12}.brand{display:flex;align-items:center;gap:14px}.mark{width:48px;height:48px;border:1px solid #9a7c48;border-radius:15px;display:grid;place-items:center;color:var(--gold2);font-weight:850;font-size:19px;background:linear-gradient(145deg,#24334a,#111b2c);box-shadow:inset 0 1px #ffffff19,0 8px 24px #0003}.brand h1{font-size:18px;margin:0;letter-spacing:.01em}.brand p{margin:2px 0 0;color:var(--muted);font-size:11px;letter-spacing:.13em;text-transform:uppercase}
+    .pill{border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--muted);font-size:12px;background:#ffffff05}.live{color:var(--green);border-color:#28634f;background:#54c49a0d}
+    .panel{background:linear-gradient(145deg,#142239ed,#101b2ded);border:1px solid #344761;border-radius:20px;padding:24px;box-shadow:0 22px 60px #0004,inset 0 1px #ffffff08}
+    .login{max-width:430px;margin:8vh auto}.login h2{margin:0 0 6px;font-size:25px}.sub{color:var(--muted);margin:0 0 22px}
+    label{display:block;color:#c4cede;font-size:13px;margin:14px 0 6px}input,select{width:100%;background:#0a1423;color:var(--text);border:1px solid #30415a;border-radius:11px;padding:12px 13px;outline:none}input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d7b36b18}
+    .btn{border:1px solid #e6c982;background:linear-gradient(135deg,#e5c780,#c59c51);color:#1b1b1b;font-weight:800;padding:10px 16px;border-radius:11px;box-shadow:0 7px 18px #c59c511c}.btn:disabled{opacity:.55;cursor:wait}.btn.secondary{background:#1b2b43;color:var(--text);border:1px solid #354a67;box-shadow:none}.btn.small{padding:7px 10px;font-size:12px}
     .error{color:#ff9c9c;font-size:13px;min-height:20px;margin-top:10px}.hidden{display:none!important}
-    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}.toolbar h2{margin:0;font-size:25px}.toolbar p{margin:3px 0 0;color:var(--muted);font-size:13px}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font-size:25px;display:block;margin-top:5px}
-    .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.filters input{max-width:280px}.filters select{max-width:220px}
-    .orders{display:grid;gap:12px}.order{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px}.order-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.order-id{font-weight:800;color:var(--gold);font-size:16px}.muted{color:var(--muted);font-size:13px}.details{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}.detail span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.detail strong{display:block;font-size:14px;margin-top:3px;overflow-wrap:anywhere}
-    .order-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:13px}.status{max-width:245px;padding:8px 10px}.status-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tag{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:5px 9px;color:var(--muted)}
-    .empty{text-align:center;padding:42px 15px;color:var(--muted)}.foot{color:#71819a;font-size:12px;text-align:center;margin-top:25px}
-    @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.details{grid-template-columns:repeat(2,1fr)}.wrap{width:min(100% - 22px,1180px);padding-top:18px}.panel{padding:18px}.toolbar h2{font-size:22px}}
-    @media(max-width:420px){.order-top{display:block}.order-top .tag{display:inline-block;margin-top:8px}.details{gap:10px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}}
+    .toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:22px}.toolbar h2{margin:0;font-size:29px;letter-spacing:-.035em}.toolbar p{margin:5px 0 0;color:var(--muted);font-size:13px}.toolbar-actions{display:flex;gap:9px;align-items:center}
+    .eyebrow{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;margin-bottom:5px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 16px}.stat{position:relative;overflow:hidden;background:linear-gradient(145deg,#15253b,#101b2d);border:1px solid #2e415c;border-radius:17px;padding:19px;min-height:132px;box-shadow:0 12px 35px #0002}.stat:after{content:"";position:absolute;width:100px;height:100px;border-radius:50%;right:-38px;top:-42px;background:#d7b36b0c}.stat span{display:block;color:#aab7c9;font-size:12px}.stat strong{font-size:29px;display:block;margin-top:8px;letter-spacing:-.04em}.stat small{display:block;color:#8293aa;font-size:11px;margin-top:3px}.stat .stat-icon{position:absolute;right:17px;top:17px;color:var(--gold);font-size:18px}
+    .overview-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.85fr);gap:15px;margin:0 0 28px}.overview-card{background:linear-gradient(145deg,#142239ed,#101b2ded);border:1px solid #2d405a;border-radius:18px;padding:20px;min-width:0}.section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.section-heading h3{font-size:15px;margin:0}.section-heading p{font-size:11px;color:var(--muted);margin:3px 0 0}.chart{height:174px;display:flex;align-items:flex-end;gap:clamp(8px,2vw,22px);padding:14px 5px 0;border-bottom:1px solid #40516a}.chart-col{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}.bar-wrap{height:132px;width:min(100%,34px);display:flex;align-items:flex-end;background:#ffffff06;border-radius:8px 8px 3px 3px;overflow:hidden}.bar{width:100%;min-height:3px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#f0d69b,#b58a43);box-shadow:0 0 18px #d7b36b26}.bar-label{font-size:10px;color:#92a1b5}.bar-value{font-size:10px;color:#d9c18d;white-space:nowrap}.quick-list{display:grid;gap:10px}.quick-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff0d}.quick-row:last-child{border:0}.quick-row span{color:#aab7c9;font-size:12px}.quick-row strong{font-size:14px}.quick-note{margin-top:12px;padding:11px 12px;border-radius:11px;background:#d7b36b0d;border:1px solid #d7b36b25;color:#cbb98f;font-size:11px}
+    .orders-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:0 0 13px}.orders-heading h3{margin:0;font-size:18px}.orders-heading p{margin:3px 0 0;color:var(--muted);font-size:12px}
+    .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.filters input{max-width:310px}.filters select{max-width:230px}
+    .orders{display:grid;gap:12px}.order{background:linear-gradient(145deg,#142239ed,#101b2ded);border:1px solid #2d405a;border-radius:16px;padding:18px;transition:border-color .2s,transform .2s}.order:hover{border-color:#8b744b;transform:translateY(-1px)}.order-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.order-id{font-weight:850;color:var(--gold2);font-size:16px}.muted{color:var(--muted);font-size:12px}.details{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:16px 0}.detail span{display:block;color:#8495ac;font-size:10px;text-transform:uppercase;letter-spacing:.09em}.detail strong{display:block;font-size:13px;margin-top:4px;overflow-wrap:anywhere}
+    .order-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid #ffffff12;padding-top:13px}.status{max-width:245px;padding:8px 10px}.status-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tag{font-size:11px;border:1px solid #3b4d65;border-radius:99px;padding:5px 9px;color:#c1ccda;background:#ffffff06}
+    .empty{text-align:center;padding:42px 15px;color:var(--muted)}.foot{color:#71819a;font-size:11px;text-align:center;margin-top:28px}
+    @media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}.overview-grid{grid-template-columns:1fr}.details{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.wrap{width:calc(100% - 22px);padding-top:16px}.panel{padding:19px}.toolbar h2{font-size:24px}.toolbar{align-items:flex-start}.toolbar-actions{width:100%;justify-content:space-between}.stats{gap:9px}.stat{padding:14px;min-height:119px}.stat strong{font-size:25px}.details{gap:11px}.orders-heading{align-items:flex-start;flex-direction:column}.filters input,.filters select{max-width:none;flex:1 1 100%}}
+    @media(max-width:380px){.stats{grid-template-columns:1fr 1fr}.stat strong{font-size:22px}.order-top{display:block}.order-top .tag{display:inline-block;margin-top:8px}.details{grid-template-columns:1fr 1fr}}
   </style>
 </head>
 <body>
@@ -49,15 +53,32 @@
 
     <section id="dashboard" class="hidden">
       <div class="toolbar">
-        <div><h2>Print orders</h2><p>Live order monitoring · updates automatically</p></div>
-        <div style="display:flex;gap:9px;align-items:center"><span class="pill live" id="liveState">● Live updates on</span><button class="btn secondary small" id="logoutBtn">Sign out</button></div>
+        <div><div class="eyebrow">Shop control centre</div><h2>Good day, Admin</h2><p>Here’s what’s happening at Gurukrupa Xerox today.</p></div>
+        <div class="toolbar-actions"><span class="pill live" id="liveState">● Live updates on</span><button class="btn secondary small" id="logoutBtn">Sign out</button></div>
       </div>
       <div class="stats">
-        <div class="stat"><span>Total orders</span><strong id="totalCount">0</strong></div>
-        <div class="stat"><span>New / received</span><strong id="newCount">0</strong></div>
-        <div class="stat"><span>Processing</span><strong id="processingCount">0</strong></div>
-        <div class="stat"><span>Ready for collection</span><strong id="readyCount">0</strong></div>
+        <div class="stat"><span>Orders today</span><strong id="todayOrders">0</strong><small id="todayOrdersHint">Orders received today</small><b class="stat-icon">▤</b></div>
+        <div class="stat"><span>Estimated sales today</span><strong id="todaySales">₹0</strong><small>Based on order estimates</small><b class="stat-icon">₹</b></div>
+        <div class="stat"><span>Needs attention</span><strong id="newCount">0</strong><small>New and received orders</small><b class="stat-icon">◷</b></div>
+        <div class="stat"><span>Ready for pickup</span><strong id="readyCount">0</strong><small>Waiting for customer collection</small><b class="stat-icon">✓</b></div>
       </div>
+      <div class="overview-grid">
+        <section class="overview-card">
+          <div class="section-heading"><div><h3>Order activity</h3><p>Orders received over the last 7 days</p></div><span class="tag">7 days</span></div>
+          <div class="chart" id="ordersChart" aria-label="Orders over the last seven days"></div>
+        </section>
+        <section class="overview-card">
+          <div class="section-heading"><div><h3>Order snapshot</h3><p>Current workflow overview</p></div></div>
+          <div class="quick-list">
+            <div class="quick-row"><span>Processing</span><strong id="processingCount">0</strong></div>
+            <div class="quick-row"><span>Completed</span><strong id="completedCount">0</strong></div>
+            <div class="quick-row"><span>Payment pending</span><strong id="paymentPending">₹0</strong></div>
+            <div class="quick-row"><span>Total orders loaded</span><strong id="totalCount">0</strong></div>
+          </div>
+          <div class="quick-note">Sales figures are estimates from submitted orders. Payment tracking will be connected when the payment gateway is integrated.</div>
+        </section>
+      </div>
+      <div class="orders-heading"><div><h3>Print orders</h3><p>Review customer requests and update their progress.</p></div><span class="tag">Latest 200 orders</span></div>
       <div class="filters">
         <input id="searchBox" type="search" placeholder="Search order, customer or phone">
         <select id="statusFilter">
@@ -107,10 +128,46 @@
     return new Date(value).toLocaleString('en-IN', {dateStyle:'medium',timeStyle:'short'});
   }
   function renderStats() {
+    const today = new Date();
+    const sameDay = value => {
+      const d = new Date(value);
+      return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+    };
+    const todays = orders.filter(o => sameDay(o.created_at));
+    const todaySales = todays.reduce((sum,o) => sum + Number(o.estimated_total || 0),0);
+    const attention = orders.filter(o => ['UPLOAD_PENDING','ORDER_RECEIVED'].includes(o.status)).length;
+    const processing = orders.filter(o => o.status === 'PROCESSING').length;
+    const ready = orders.filter(o => o.status === 'READY_FOR_COLLECTION').length;
+    const completed = orders.filter(o => o.status === 'COMPLETED').length;
+    const pendingAmount = orders.filter(o => !['PAID','REFUNDED'].includes(String(o.payment_status || '').toUpperCase()))
+      .reduce((sum,o) => sum + Number(o.estimated_total || 0),0);
+    $('todayOrders').textContent = todays.length;
+    $('todaySales').textContent = money(todaySales);
+    $('todayOrdersHint').textContent = todays.length === 1 ? '1 order received today' : `${todays.length} orders received today`;
+    $('newCount').textContent = attention;
+    $('processingCount').textContent = processing;
+    $('readyCount').textContent = ready;
+    $('completedCount').textContent = completed;
+    $('paymentPending').textContent = money(pendingAmount);
     $('totalCount').textContent = orders.length;
-    $('newCount').textContent = orders.filter(o => ['UPLOAD_PENDING','ORDER_RECEIVED'].includes(o.status)).length;
-    $('processingCount').textContent = orders.filter(o => o.status === 'PROCESSING').length;
-    $('readyCount').textContent = orders.filter(o => o.status === 'READY_FOR_COLLECTION').length;
+    renderOrdersChart();
+  }
+  function renderOrdersChart() {
+    const now = new Date();
+    const days = [];
+    for (let offset=6; offset>=0; offset--) {
+      const d = new Date(now.getFullYear(),now.getMonth(),now.getDate()-offset);
+      const count = orders.filter(o => {
+        const x = new Date(o.created_at);
+        return x.getFullYear()===d.getFullYear() && x.getMonth()===d.getMonth() && x.getDate()===d.getDate();
+      }).length;
+      days.push({date:d,count,label:d.toLocaleDateString('en-IN',{weekday:'short'})});
+    }
+    const max = Math.max(1,...days.map(x=>x.count));
+    $('ordersChart').innerHTML = days.map(day => {
+      const height = Math.max(3,Math.round(day.count/max*100));
+      return `<div class="chart-col"><span class="bar-value">${day.count}</span><div class="bar-wrap"><div class="bar" style="height:${height}%"></div></div><span class="bar-label">${day.label}</span></div>`;
+    }).join('');
   }
   function renderOrders() {
     renderStats();
