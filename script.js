@@ -1,91 +1,246 @@
+**Part 1/6 — Original `script.js`**
+
 ```javascript
-      const isOpen = navLinks.classList.toggle("active");
-      menuToggle.classList.toggle("active", isOpen);
-      menuToggle.setAttribute("aria-expanded", String(isOpen));
-      menuToggle.setAttribute(
-        "aria-label",
-        isOpen
-          ? translations[document.documentElement.lang].closeMenu
-          : translations[document.documentElement.lang].mobileMenu
-      );
-    });
+/* =====================================================
+   GURUKRUPA XEROX - MULTILINGUAL WEBSITE
+   English | Marathi | Hindi
+   ===================================================== */
 
-    navLinks.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", closeMenu);
-    });
+document.addEventListener("DOMContentLoaded", () => {
+
+  const translations = {
+    en: {
+      nav: ["Home", "Services", "About", "Gallery", "Contact"],
+      heroEyebrow: "YOUR TRUSTED MULTISERVICE CENTRE",
+      heroTitle: 'Every service.<br><span>One place.</span>',
+      heroDescription: "From everyday Xerox and printing to online applications, government services and business support — everything you need, made simpler.",
+      explore: "Explore Services ↗",
+      contact: "Contact Us",
+      trust: ["✓ Reliable service", "✓ Convenient solutions", "✓ Local support"],
+      documentServices: "DOCUMENT SERVICES",
+      onePlace: "ONE PLACE",
+      simple: "SIMPLE. TRUSTED. CONVENIENT.",
+      quick: ["Xerox & Printing", "Online Services", "Government Work", "Business Support"],
+      printLabel: "PRINT WITHOUT THE WAIT",
+      printTitle: 'Your documents.<br><span>Ready when you are.</span>',
+      printDescription: "Discover our upcoming online printing service. Prepare your documents and collect your prints conveniently from our shop.",
+      printSteps: ["Upload your documents", "Review and confirm", "Pay securely and collect"],
+      printButton: "Explore Print Online ↗",
+      printNote: "Online ordering will be available after the print-order system is launched.",
+      whyLabel: "WHY GURUKRUPA",
+      whyTitle: "One destination.<br>Many solutions.",
+      whyDescription: "We bring essential services together to make your everyday work easier.",
+      whyCards: [
+        ["Convenience", "Multiple essential services in one place."],
+        ["Accessibility", "Local assistance for everyday digital needs."],
+        ["Versatility", "Solutions for students, individuals and businesses."],
+        ["Support", "Personal assistance when you need it."]
+      ],
+      enquiryLabel: "SERVICE REQUEST",
+      enquiryTitle: 'How can we <span>help you?</span>',
+      enquiryDescription: "Tell us what you need. We'll help you with the next step.",
+      name: "Your name *",
+      mobile: "Mobile number *",
+      selectService: "Select service *",
+      chooseService: "Choose a service",
+      services: ["Xerox & Printing", "Online Form Filling", "Income Tax Work", "Government Services", "Data Entry Services", "Business Support", "Other Enquiry"],
+      visitDate: "Preferred visit date",
+      requirements: "Your requirements *",
+      messagePlaceholder: "Tell us what service you need...",
+      submit: "Send Enquiry on WhatsApp ↗",
+      disclaimer: "Your enquiry will open in WhatsApp for you to send. Do not include passwords, OTPs or sensitive financial information.",
+      findUs: "FIND US",
+      mapTitle: 'Visit our <span>centre.</span>',
+      mapDescription: "Plot No. 48, Balaji Nagar, New Bhokardan, Maharashtra – 431114.",
+      directions: "Open Directions in Google Maps ↗",
+      quickLinks: "QUICK LINKS",
+      ourServices: "OUR SERVICES",
+      getInTouch: "GET IN TOUCH",
+      footerDescription: "Every Service. One Place. Your trusted local multiservice centre.",
+      footerAddress: "Plot No. 48, Balaji Nagar, New Bhokardan, Maharashtra – 431114",
+      footerCopyright: "All rights reserved.",
+      footerTagline: "Designed with care. Built for convenience.",
+      chat: "Chat with us",
+      document: "Document.pdf",
+      ready: "Ready for printing",
+      preview: "✓ Document preview concept",
+      mobileMenu: "Open navigation menu",
+      closeMenu: "Close navigation menu"
+    },
+
+    mr: {
+      nav: ["मुख्यपृष्ठ", "सेवा", "आमच्याबद्दल", "गॅलरी", "संपर्क"],
+      heroEyebrow: "तुमचे विश्वासार्ह मल्टीसर्व्हिस केंद्र",
+      heroTitle: 'प्रत्येक सेवा.<br><span>एकाच ठिकाणी.</span>',
+      heroDescription: "झेरॉक्स आणि प्रिंटिंगपासून ऑनलाइन अर्ज, सरकारी सेवा आणि व्यवसाय सहाय्यापर्यंत — तुमच्या सर्व गरजांसाठी सोयीस्कर सेवा.",
+      explore: "सेवा पहा ↗",
+      contact: "संपर्क साधा",
+      trust: ["✓ विश्वासार्ह सेवा", "✓ सोयीस्कर सुविधा", "✓ स्थानिक सहाय्य"],
+      documentServices: "कागदपत्र सेवा",
+      onePlace: "एकाच ठिकाणी",
+      simple: "सोपी. विश्वासार्ह. सोयीस्कर.",
+      quick: ["झेरॉक्स आणि प्रिंटिंग", "ऑनलाइन सेवा", "सरकारी कामे", "व्यवसाय सहाय्य"],
+      printLabel: "वाट न पाहता प्रिंटिंग",
+      printTitle: 'तुमची कागदपत्रे.<br><span>तुमच्या सोयीच्या वेळी.</span>',
+      printDescription: "आमच्या आगामी ऑनलाइन प्रिंटिंग सेवेची माहिती घ्या. कागदपत्रे तयार करा आणि दुकानातून प्रिंट सहज घेऊन जा.",
+      printSteps: ["कागदपत्रे अपलोड करा", "तपासून निश्चित करा", "सुरक्षित पेमेंट करून प्रिंट घ्या"],
+      printButton: "ऑनलाइन प्रिंटिंग पहा ↗",
+      printNote: "ऑनलाइन ऑर्डरिंग सुविधा सुरू झाल्यानंतर उपलब्ध होईल.",
+      whyLabel: "गुरुकृपा का निवडावे?",
+      whyTitle: "एक ठिकाण.<br>अनेक उपाय.",
+      whyDescription: "तुमची दैनंदिन कामे सोपी करण्यासाठी आवश्यक सेवा एकाच ठिकाणी.",
+      whyCards: [
+        ["सोय", "अनेक आवश्यक सेवा एकाच ठिकाणी."],
+        ["उपलब्धता", "दैनंदिन डिजिटल कामांसाठी स्थानिक सहाय्य."],
+        ["विविधता", "विद्यार्थी, नागरिक आणि व्यवसायांसाठी उपाय."],
+        ["सहाय्य", "गरजेनुसार वैयक्तिक मदत."]
+      ],
+      enquiryLabel: "सेवा विनंती",
+      enquiryTitle: '<span>आम्ही कशी मदत करू?</span>',
+      enquiryDescription: "तुमची गरज सांगा. पुढील प्रक्रियेत आम्ही मदत करू.",
+      name: "तुमचे नाव *",
+      mobile: "मोबाईल क्रमांक *",
+      selectService: "सेवा निवडा *",
+      chooseService: "सेवा निवडा",
+      services: ["झेरॉक्स आणि प्रिंटिंग", "ऑनलाइन फॉर्म भरणे", "आयकर काम", "सरकारी सेवा", "डेटा एन्ट्री सेवा", "व्यवसाय सहाय्य", "इतर चौकशी"],
+      visitDate: "भेट देण्याची पसंतीची तारीख",
+      requirements: "तुमची आवश्यकता *",
+      messagePlaceholder: "तुम्हाला कोणती सेवा हवी आहे ते सांगा...",
+      submit: "WhatsApp वर चौकशी पाठवा ↗",
+      disclaimer: "तुमची चौकशी WhatsApp मध्ये उघडेल. पासवर्ड, OTP किंवा संवेदनशील आर्थिक माहिती पाठवू नका.",
+      findUs: "आम्हाला भेट द्या",
+      mapTitle: '<span>आमच्या केंद्राला</span> भेट द्या.',
+      mapDescription: "प्लॉट नं. ४८, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – ४३१११४.",
+      directions: "Google Maps वर मार्ग पहा ↗",
+      quickLinks: "महत्त्वाचे दुवे",
+      ourServices: "आमच्या सेवा",
+      getInTouch: "संपर्क माहिती",
+      footerDescription: "प्रत्येक सेवा. एकाच ठिकाणी. तुमचे विश्वासार्ह स्थानिक सेवा केंद्र.",
+      footerAddress: "प्लॉट नं. ४८, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – ४३१११४",
+      footerCopyright: "सर्व हक्क राखीव.",
+      footerTagline: "काळजीपूर्वक डिझाइन. सोयीसाठी निर्मित.",
+      chat: "आमच्याशी बोला",
+      document: "कागदपत्र.pdf",
+      ready: "प्रिंटिंगसाठी तयार",
+      preview: "✓ कागदपत्र पूर्वदृश्य संकल्पना",
+      mobileMenu: "मेनू उघडा",
+      closeMenu: "मेनू बंद करा"
+    },
+
+    hi: {
+      nav: ["होम", "सेवाएँ", "हमारे बारे में", "गैलरी", "संपर्क"],
+      heroEyebrow: "आपका विश्वसनीय मल्टीसर्विस सेंटर",
+      heroTitle: 'हर सेवा।<br><span>एक ही जगह।</span>',
+      heroDescription: "रोज़मर्रा की ज़ेरॉक्स और प्रिंटिंग से लेकर ऑनलाइन आवेदन, सरकारी सेवाओं और व्यावसायिक सहायता तक — आपकी सभी ज़रूरतों के लिए आसान समाधान।",
+      explore: "सेवाएँ देखें ↗",
+      contact: "संपर्क करें",
+      trust: ["✓ विश्वसनीय सेवा", "✓ सुविधाजनक समाधान", "✓ स्थानीय सहायता"],
+      documentServices: "दस्तावेज़ सेवाएँ",
+      onePlace: "एक ही जगह",
+      simple: "आसान। विश्वसनीय। सुविधाजनक।",
+      quick: ["ज़ेरॉक्स और प्रिंटिंग", "ऑनलाइन सेवाएँ", "सरकारी कार्य", "व्यावसायिक सहायता"],
+      printLabel: "बिना इंतज़ार प्रिंटिंग",
+      printTitle: 'आपके दस्तावेज़।<br><span>आपकी सुविधा के अनुसार।</span>',
+      printDescription: "हमारी आगामी ऑनलाइन प्रिंटिंग सेवा के बारे में जानें। अपने दस्तावेज़ तैयार करें और दुकान से आसानी से प्रिंट प्राप्त करें।",
+      printSteps: ["दस्तावेज़ अपलोड करें", "जाँचें और पुष्टि करें", "सुरक्षित भुगतान करके प्रिंट लें"],
+      printButton: "ऑनलाइन प्रिंटिंग देखें ↗",
+      printNote: "ऑनलाइन ऑर्डरिंग सुविधा सिस्टम शुरू होने के बाद उपलब्ध होगी।",
+      whyLabel: "गुरुकृपा क्यों चुनें?",
+      whyTitle: "एक जगह।<br>अनेक समाधान।",
+      whyDescription: "आपके रोज़मर्रा के काम आसान बनाने के लिए आवश्यक सेवाएँ एक ही जगह।",
+      whyCards: [
+        ["सुविधा", "कई आवश्यक सेवाएँ एक ही जगह।"],
+        ["उपलब्धता", "रोज़मर्रा के डिजिटल कार्यों के लिए स्थानीय सहायता।"],
+        ["विविधता", "विद्यार्थियों, व्यक्तियों और व्यवसायों के लिए समाधान।"],
+        ["सहायता", "ज़रूरत पड़ने पर व्यक्तिगत मदद।"]
+      ],
+      enquiryLabel: "सेवा अनुरोध",
+      enquiryTitle: 'हम आपकी <span>कैसे मदद करें?</span>',
+      enquiryDescription: "अपनी ज़रूरत बताएँ। आगे की प्रक्रिया में हम आपकी मदद करेंगे।",
+      name: "आपका नाम *",
+      mobile: "मोबाइल नंबर *",
+      selectService: "सेवा चुनें *",
+      chooseService: "सेवा चुनें",
+      services: ["ज़ेरॉक्स और प्रिंटिंग", "ऑनलाइन फॉर्म भरना", "आयकर कार्य", "सरकारी सेवाएँ", "डेटा एंट्री सेवाएँ", "व्यावसायिक सहायता", "अन्य पूछताछ"],
+      visitDate: "आने की पसंदीदा तारीख",
+      requirements: "आपकी आवश्यकता *",
+      messagePlaceholder: "बताएँ कि आपको कौन सी सेवा चाहिए...",
+      submit: "WhatsApp पर पूछताछ भेजें ↗",
+      disclaimer: "आपकी पूछताछ WhatsApp में खुलेगी। पासवर्ड, OTP या संवेदनशील वित्तीय जानकारी न भेजें।",
+      findUs: "हमसे मिलें",
+      mapTitle: '<span>हमारे केंद्र पर</span> आएँ।',
+      mapDescription: "प्लॉट नं. 48, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – 431114.",
+      directions: "Google Maps पर रास्ता देखें ↗",
+      quickLinks: "त्वरित लिंक",
+      ourServices: "हमारी सेवाएँ",
+      getInTouch: "संपर्क करें",
+      footerDescription: "हर सेवा। एक ही जगह। आपका विश्वसनीय स्थानीय सेवा केंद्र।",
+      footerAddress: "प्लॉट नं. 48, बालाजी नगर, न्यू भोकरदन, महाराष्ट्र – 431114",
+      footerCopyright: "सर्वाधिकार सुरक्षित।",
+      footerTagline: "ध्यान से डिज़ाइन किया गया। सुविधा के लिए बनाया गया।",
+      chat: "हमसे चैट करें",
+      document: "दस्तावेज़.pdf",
+      ready: "प्रिंटिंग के लिए तैयार",
+      preview: "✓ दस्तावेज़ पूर्वावलोकन अवधारणा",
+      mobileMenu: "नेविगेशन मेनू खोलें",
+      closeMenu: "नेविगेशन मेनू बंद करें"
+    }
+  };
+
+  const languageSelect = document.getElementById("languageSelect");
+
+  function setText(selector, value) {
+    const element = document.querySelector(selector);
+    if (element && value !== undefined) element.innerHTML = value;
   }
 
-  // Current year
-  const currentYear = document.getElementById("currentYear");
-  if (currentYear) currentYear.textContent = new Date().getFullYear();
+  function setElementLabel(element, value) {
+    if (!element || value === undefined) return;
 
-  // Set minimum date for visit date field
-  const visitDate = document.getElementById("visitDate");
-  if (visitDate) {
-    const today = new Date();
-    const localDate = new Date(
-      today.getTime() - today.getTimezoneOffset() * 60000
-    ).toISOString().split("T")[0];
+    // Keep decorative icons/arrows while replacing only the visible label.
+    const children = Array.from(element.childNodes);
+    const firstElementChild = children.find(node => node.nodeType === Node.ELEMENT_NODE);
 
-    visitDate.min = localDate;
+    if (!firstElementChild) {
+      element.textContent = value;
+      return;
+    }
+
+    const preservedChildren = children.filter(node => node.nodeType === Node.ELEMENT_NODE);
+    element.replaceChildren(document.createTextNode(value), ...preservedChildren);
   }
 
-  // WhatsApp enquiry form
-  const enquiryForm = document.getElementById("enquiryForm");
-
-  if (enquiryForm) {
-    enquiryForm.addEventListener("submit", event => {
-      event.preventDefault();
-
-      const name = document.getElementById("customerName")?.value.trim();
-      const mobile = document.getElementById("customerMobile")?.value.trim();
-      const service = document.getElementById("serviceType")?.selectedOptions[0]?.text;
-      const date = document.getElementById("visitDate")?.value;
-      const message = document.getElementById("enquiryMessage")?.value.trim();
-
-      if (!name || !mobile || !service || !message) {
-        alert("Please complete all required fields.");
-        return;
-      }
-
-      const text = [
-        "Hello Gurukrupa Xerox And Soham Multiservices!",
-        "",
-        `Name: ${name}`,
-        `Mobile: ${mobile}`,
-        `Service: ${service}`,
-        date ? `Preferred visit date: ${date}` : "",
-        `Requirements: ${message}`
-      ].filter(Boolean).join("\n");
-
-      const whatsappURL =
-        `https://wa.me/917745062299?text=${encodeURIComponent(text)}`;
-
-      window.open(whatsappURL, "_blank", "noopener,noreferrer");
-    });
+  function setPlainText(selector, value) {
+    const element = document.querySelector(selector);
+    setElementLabel(element, value);
   }
 
-});
-      const isOpen = navLinks.classList.toggle("active");
-      menuToggle.classList.toggle("active", isOpen);
-      menuToggle.setAttribute("aria-expanded", String(isOpen));
-      menuToggle.setAttribute(
-        "aria-label",
-        isOpen
-          ? translations[document.documentElement.lang].closeMenu
-          : translations[document.documentElement.lang].mobileMenu
-      );
+  function setLanguage(language) {
+    const t = translations[language] || translations.en;
+    document.documentElement.lang = language;
+
+    // Navigation
+    document.querySelectorAll("#navLinks a").forEach((link, index) => {
+      if (t.nav[index]) link.textContent = t.nav[index];
     });
 
-    navLinks.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", closeMenu);
+    // Hero
+    setPlainText(".eyebrow", t.heroEyebrow);
+    setText(".hero h1", t.heroTitle);
+    setPlainText(".hero-description", t.heroDescription);
+    setText(".hero-buttons .btn-primary", t.explore);
+    setPlainText(".hero-buttons .btn-secondary", t.contact);
+
+    document.querySelectorAll(".hero-trust span").forEach((el, i) => {
+      if (t.trust[i]) el.textContent = t.trust[i];
     });
 
-    document.addEventListener("click", event => {
-      if (!navLinks.contains(event.target) &&
-          !menuToggle.contains(event.target)) {
-        closeMenu();
-      }
+    setPlainText(".card-back span:last-child", t.documentServices);
+    setPlainText(".document-tag", t.onePlace);
+    setPlainText(".floating-badge", t.simple);
+
+    // Quick services
+          }
     });
 
     document.addEventListener("keydown", event => {
@@ -206,6 +361,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cards: [
           ["Convenience", "Multiple essential services in one place."],
           ["Accessibility", "Local assistance for everyday digital needs."],
+                    ["Accessibility", "Local assistance for everyday digital needs."],
           ["Versatility", "Solutions for students, individuals and businesses."],
           ["Support", "Personal assistance when you need it."]
         ]
@@ -281,11 +437,12 @@ document.addEventListener("DOMContentLoaded", () => {
         ]
       }
     },
-            mr: {
+
+    mr: {
       nav: ["मुख्यपृष्ठ", "सेवा", "आमच्याबद्दल", "गॅलरी", "संपर्क"],
       print: "ऑनलाइन प्रिंटिंग",
       footer: ["महत्त्वाचे दुवे", "आमच्या सेवा", "संपर्क माहिती"],
-      footerLinks: [
+            footerLinks: [
         "मुख्यपृष्ठ", "सेवा", "आमच्याबद्दल", "गॅलरी", "संपर्क",
         "ऑनलाइन प्रिंटिंग", "झेरॉक्स आणि प्रिंटिंग", "ऑनलाइन फॉर्म भरणे",
         "आयकर काम", "सरकारी सेवा", "डेटा एन्ट्री"
@@ -429,6 +586,10 @@ document.addEventListener("DOMContentLoaded", () => {
           ["सहायता", "ज़रूरत पड़ने पर व्यक्तिगत मदद।"]
         ]
       },
+                ["विविधता", "विद्यार्थियों, व्यक्तियों और व्यवसायों के लिए समाधान।"],
+          ["सहायता", "ज़रूरत पड़ने पर व्यक्तिगत मदद।"]
+        ]
+      },
 
       gallery: {
         label: "हमारी गैलरी",
@@ -501,7 +662,41 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   };
-        // Add a selector automatically on pages where it is missing.
+
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) =>
+    Array.from(root.querySelectorAll(selector));
+
+  function put(selector, value, root = document, html = false) {
+    const element = $(selector, root);
+    if (!element || value === undefined) return;
+    if (html) element.innerHTML = value;
+    else {
+      const children = Array.from(element.childNodes);
+      const hasElementChildren = children.some(
+        node => node.nodeType === Node.ELEMENT_NODE
+      );
+
+      if (!hasElementChildren) {
+        element.textContent = value;
+      } else {
+        const preservedChildren = children.filter(
+          node => node.nodeType === Node.ELEMENT_NODE
+        );
+        element.replaceChildren(document.createTextNode(value), ...preservedChildren);
+      }
+    }
+  }
+
+  function setArray(selector, values, property = "textContent") {
+    $$(selector).forEach((element, index) => {
+      if (values[index] !== undefined) {
+        element[property] = values[index];
+      }
+    });
+  }
+
+  // Add a selector automatically on pages where it is missing.
   let languageSelect = $("#languageSelect");
 
   if (!languageSelect) {
@@ -591,8 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
     put(".why-section .section-label", d.whyLabel);
     put(".why-section .section-heading h2", d.whyTitle);
     put(".why-section .section-heading > p", d.whyDescription);
-
-    $$(".why-section .why-card").forEach((card, index) => {
+            $$(".why-section .why-card").forEach((card, index) => {
       const item = d.cards[index];
       if (!item) return;
       put("h3", item[0], card);
