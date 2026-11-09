@@ -306,11 +306,11 @@
           </div>
 
           <button type="submit" class="order-whatsapp-button" id="sendOrderButton">
-            Continue on WhatsApp <span>↗</span>
+            Submit print order <span>↗</span>
           </button>
           <p class="order-submit-note">
-            WhatsApp will open with your order summary. Please attach your selected
-            document files in that chat; this page does not upload files automatically.
+            Your selected documents will be securely uploaded to Gurukrupa Xerox
+            when you submit. Please keep this page open until confirmation appears.
           </p>
           <p class="order-form-message" id="orderFormMessage" role="status" aria-live="polite"></p>
         </form>
@@ -717,7 +717,7 @@
 
 
 
-  <!-- ORDER REVIEW SUMMARY AND WHATSAPP HANDOFF -->
+  <!-- ORDER REVIEW SUMMARY AND SUPABASE ORDER SUBMISSION -->
   <script>
     (() => {
       const form = document.getElementById("orderReviewForm");
@@ -728,6 +728,8 @@
       const sides = byId("printSides");
       const pagesInput = byId("pageCount");
       const copiesInput = byId("copyCount");
+      const submitButton = byId("sendOrderButton");
+      const message = byId("orderFormMessage");
 
       const money = value => "₹" + Number(value).toLocaleString("en-IN");
 
@@ -749,9 +751,7 @@
         const files = window.getSelectedPrintFiles ? window.getSelectedPrintFiles() : [];
         const list = byId("reviewDocumentList");
         list.innerHTML = "";
-
-        byId("reviewDocumentCount").textContent =
-          files.length + (files.length === 1 ? " file" : " files");
+        byId("reviewDocumentCount").textContent = files.length + (files.length === 1 ? " file" : " files");
 
         if (!files.length) {
           const empty = document.createElement("li");
@@ -785,52 +785,61 @@
       });
       window.addEventListener("printfileschanged", refreshOrderReview);
 
-      form.addEventListener("submit", event => {
+      form.addEventListener("submit", async event => {
         event.preventDefault();
-
-        const name = byId("customerName").value.trim();
-        const phone = byId("customerPhone").value.trim();
         const files = window.getSelectedPrintFiles ? window.getSelectedPrintFiles() : [];
-        const message = byId("orderFormMessage");
 
         if (!files.length) {
-          message.textContent = "Please select at least one document in Stage 1 before continuing.";
+          message.textContent = "Please select at least one document in Stage 1 before submitting.";
           message.className = "order-form-message error";
           return;
         }
         if (!form.reportValidity()) return;
 
+        const name = byId("customerName").value.trim();
+        const phone = byId("customerPhone").value.trim();
         const order = getOrderNumbers();
-        const fileNames = files.map((file, index) => `${index + 1}. ${file.name}`).join("\n");
-        const text = [
-          "Hello Gurukrupa Xerox! I would like to place a print order.",
-          "",
-          "CUSTOMER DETAILS",
-          "Name: " + name,
-          "Mobile: " + phone,
-          "",
-          "DOCUMENTS (I will attach these files in this chat)",
-          fileNames,
-          "",
-          "PRINT SETTINGS",
-          "Paper size: A4",
-          "Print mode: " + (order.modeValue === "colour" ? "Colour" : "Black & White"),
-          "Sides: " + (order.sidesValue === "double" ? "Double-sided" : "Single-sided"),
-          "Pages per copy: " + order.pages,
-          "Copies: " + order.copies,
-          "Sheets per copy: " + order.sheetsPerCopy,
-          "Total sheets: " + order.totalSheets,
-          "Rate: " + money(order.rate) + " per sheet",
-          "Estimated total: " + money(order.total),
-          "",
-          "Collection: From your shop in Bhokardan.",
-          "Please confirm the order and final amount. Thank you!"
-        ].join("\n");
+        const formData = new FormData();
+        formData.append("customerName", name);
+        formData.append("customerPhone", phone);
+        formData.append("printMode", order.modeValue);
+        formData.append("printSides", order.sidesValue);
+        formData.append("pageCount", String(order.pages));
+        formData.append("copyCount", String(order.copies));
+        files.forEach(file => formData.append("files", file, file.name));
 
-        const whatsappUrl = "https://wa.me/917745062299?text=" + encodeURIComponent(text);
-        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-        message.textContent = "Your order summary is ready in WhatsApp. Remember to attach the document files.";
-        message.className = "order-form-message success";
+        submitButton.disabled = true;
+        submitButton.textContent = "Uploading documents…";
+        message.textContent = "Uploading your documents and creating your order. Please keep this page open.";
+        message.className = "order-form-message";
+
+        try {
+          const response = await fetch(
+            "https://fnsueklwnlndbismlwda.supabase.co/functions/v1/submit-print-order",
+            {
+              method: "POST",
+              headers: {
+                "apikey": "sb_publishable_YeQac-5UJ8yjNb1xzyU7BA_luVBWfZ7"
+              },
+              body: formData
+            }
+          );
+
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.success) {
+            throw new Error(result.error || "Your order could not be submitted. Please try again.");
+          }
+
+          message.textContent = `Order received! Your order ID is ${result.orderId}. Estimated total: ${money(result.estimatedTotal)}. The shop will contact you to confirm.`;
+          message.className = "order-form-message success";
+          submitButton.textContent = "Order submitted ✓";
+          form.reset();
+        } catch (error) {
+          message.textContent = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+          message.className = "order-form-message error";
+          submitButton.disabled = false;
+          submitButton.innerHTML = 'Submit print order <span>↗</span>';
+        }
       });
 
       refreshOrderReview();
