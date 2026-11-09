@@ -1746,3 +1746,237 @@ button:focus-visible {
   }
 
 }
+
+/* =========================================================
+   CUSTOMER EXPERIENCE UPGRADE
+   WhatsApp, Enquiry Form and Google Maps
+   ========================================================= */
+
+/* FLOATING WHATSAPP */
+
+.floating-whatsapp {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 19px;
+  border-radius: 50px;
+  color: #fff;
+  background: #168c55;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  font-weight: 800;
+  transition: 0.3s ease;
+}
+
+.floating-whatsapp:hover {
+  background: #087443;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.whatsapp-symbol {
+  font-size: 23px;
+  line-height: 1;
+}
+
+/* ENQUIRY SECTION */
+
+.enquiry-section {
+  max-width: 900px;
+  margin: 65px auto 0;
+  padding: 45px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.enquiry-heading,
+.map-heading {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.enquiry-heading h2,
+.map-heading h2 {
+  margin-top: 12px;
+  color: var(--navy);
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+
+.enquiry-heading h2 span,
+.map-heading h2 span {
+  color: var(--blue);
+}
+
+.enquiry-heading p,
+.map-heading p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.enquiry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  min-height: 49px;
+  padding: 13px 15px;
+  border: 1px solid #dfe5ed;
+  border-radius: 10px;
+  outline: none;
+  color: var(--text);
+  background: #fbfcfe;
+  font: inherit;
+  font-size: 13px;
+  transition: 0.25s ease;
+}
+
+.form-field textarea {
+  min-height: 125px;
+  resize: vertical;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--gold);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(217, 185, 120, 0.13);
+}
+
+.enquiry-submit {
+  min-height: 52px;
+  padding: 13px 20px;
+  border: 0;
+  border-radius: 11px;
+  color: #fff;
+  background: var(--navy);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.enquiry-submit:hover {
+  background: var(--blue);
+  transform: translateY(-2px);
+}
+
+.enquiry-submit span {
+  margin-left: 8px;
+  color: var(--gold-light);
+}
+
+.form-disclaimer {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* GOOGLE MAPS */
+
+.map-section {
+  max-width: 1220px;
+  margin: 75px auto 0;
+  padding: 0 25px 65px;
+}
+
+.map-frame {
+  height: 390px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: #f1f4f8;
+  box-shadow: var(--shadow);
+}
+
+.map-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.map-directions {
+  display: table;
+  margin: 20px auto 0;
+  padding: 13px 21px;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--navy);
+  font-size: 12px;
+  font-weight: 700;
+  transition: 0.25s ease;
+}
+
+.map-directions:hover {
+  background: var(--blue);
+  transform: translateY(-2px);
+}
+
+/* MOBILE */
+
+@media (max-width: 760px) {
+  .enquiry-section {
+    margin: 45px 18px 0;
+    padding: 25px 18px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .map-section {
+    margin-top: 50px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .map-frame {
+    height: 300px;
+    border-radius: 14px;
+  }
+
+  .floating-whatsapp {
+    right: 15px;
+    bottom: 15px;
+    padding: 13px;
+  }
+
+  .whatsapp-label {
+    display: none;
+  }
+}
+
