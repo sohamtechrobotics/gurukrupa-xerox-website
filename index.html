@@ -8,19 +8,52 @@
   <title>Gurukrupa Xerox & Soham Multiservices | Bhokardan</title>
 
   <meta name="description" content="Gurukrupa Xerox And Soham Multiservices – Your trusted destination for Xerox, printing, online form filling, income tax work, government services and business support in Bhokardan, Maharashtra.">
-  <meta name="keywords" content="Gurukrupa Xerox, Soham Multiservices, Xerox Bhokardan, Printing Bhokardan, Online Form Filling, Government Services">
+
+  <meta name="keywords" content="Gurukrupa Xerox, Soham Multiservices, Xerox Bhokardan, Printing Bhokardan, Online Form Filling, Government Services, Income Tax Work, Data Entry Bhokardan">
+
   <meta name="author" content="Gurukrupa Xerox And Soham Multiservices">
   <meta name="theme-color" content="#071a33">
 
+  <link rel="canonical" href="https://sohamtechrobotics.github.io/gurukrupa-xerox-website/">
+
+  <!-- OPEN GRAPH -->
   <meta property="og:title" content="Gurukrupa Xerox & Soham Multiservices">
   <meta property="og:description" content="Every Service. One Place. Your trusted local multiservice centre in Bhokardan.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sohamtechrobotics.github.io/gurukrupa-xerox-website/">
+  <meta property="og:site_name" content="Gurukrupa Xerox & Soham Multiservices">
 
+  <!-- BUSINESS STRUCTURED DATA -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Gurukrupa Xerox And Soham Multiservices",
+    "description": "Xerox, printing, online form filling, income tax work, government-related services and business support.",
+    "url": "https://sohamtechrobotics.github.io/gurukrupa-xerox-website/",
+    "telephone": "+917745062299",
+    "email": "narayan.katore9@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Plot No. 48, Balaji Nagar, New Bhokardan",
+      "addressLocality": "Bhokardan",
+      "addressRegion": "Maharashtra",
+      "postalCode": "431114",
+      "addressCountry": "IN"
+    }
+  }
+  </script>
+
+  <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- WEBSITE STYLES -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- WEBSITE JAVASCRIPT -->
   <script src="script.js" defer></script>
 </head>
 
@@ -28,15 +61,17 @@
 
   <!-- NAVIGATION -->
   <header class="navbar">
+
     <a href="index.html" class="brand" aria-label="Gurukrupa home">
       <div class="brand-logo">G</div>
+
       <div class="brand-text">
         <strong>GURUKRUPA</strong>
         <span>XEROX & MULTISERVICES</span>
       </div>
     </a>
 
-    <nav class="nav-links" id="navLinks">
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
       <a href="index.html" aria-current="page">Home</a>
       <a href="services.html">Services</a>
       <a href="about.html">About</a>
@@ -45,6 +80,7 @@
     </nav>
 
     <div class="nav-actions">
+
       <a href="print-online.html" class="nav-print">
         Print Online <span>↗</span>
       </a>
@@ -55,12 +91,15 @@
         aria-label="Open navigation menu"
         aria-expanded="false"
         aria-controls="navLinks"
+        type="button"
       >
         <span></span>
         <span></span>
         <span></span>
       </button>
+
     </div>
+
   </header>
 
   <main>
@@ -87,6 +126,7 @@
         </p>
 
         <div class="hero-buttons">
+
           <a href="services.html" class="btn-primary">
             Explore Services <span>↗</span>
           </a>
@@ -94,6 +134,7 @@
           <a href="contact.html" class="btn-secondary">
             Contact Us
           </a>
+
         </div>
 
         <div class="hero-trust">
@@ -295,6 +336,156 @@
 
     </section>
 
+    <!-- SERVICE ENQUIRY -->
+    <section class="enquiry-section" id="enquiry">
+
+      <div class="enquiry-heading">
+
+        <span class="section-label">SERVICE REQUEST</span>
+
+        <h2>
+          How can we <span>help you?</span>
+        </h2>
+
+        <p>
+          Tell us what you need. We'll help you with the next step.
+        </p>
+
+      </div>
+
+      <form id="enquiryForm" class="enquiry-form">
+
+        <div class="form-row">
+
+          <div class="form-field">
+            <label for="customerName">Your name *</label>
+
+            <input
+              id="customerName"
+              name="customerName"
+              type="text"
+              placeholder="Enter your name"
+              autocomplete="name"
+              required
+              maxlength="80"
+            >
+          </div>
+
+          <div class="form-field">
+            <label for="customerPhone">Mobile number *</label>
+
+            <input
+              id="customerPhone"
+              name="customerPhone"
+              type="tel"
+              placeholder="10-digit mobile number"
+              inputmode="numeric"
+              autocomplete="tel-national"
+              pattern="[6-9][0-9]{9}"
+              required
+              maxlength="10"
+              title="Enter a valid 10-digit Indian mobile number."
+            >
+          </div>
+
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-field">
+            <label for="serviceType">Select service *</label>
+
+            <select id="serviceType" name="serviceType" required>
+              <option value="">Choose a service</option>
+              <option value="Xerox & Printing">Xerox & Printing</option>
+              <option value="Online Form Filling">Online Form Filling</option>
+              <option value="Income Tax Work">Income Tax Work</option>
+              <option value="Government Services">Government Services</option>
+              <option value="Data Entry Services">Data Entry Services</option>
+              <option value="Business Support">Business Support</option>
+              <option value="Other Enquiry">Other Enquiry</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="preferredDate">Preferred visit date</label>
+
+            <input
+              id="preferredDate"
+              name="preferredDate"
+              type="date"
+            >
+          </div>
+
+        </div>
+
+        <div class="form-field">
+          <label for="enquiryMessage">Your requirements *</label>
+
+          <textarea
+            id="enquiryMessage"
+            name="enquiryMessage"
+            rows="5"
+            placeholder="Tell us what service you need..."
+            required
+            maxlength="1000"
+          ></textarea>
+        </div>
+
+        <button type="submit" class="enquiry-submit">
+          Send Enquiry on WhatsApp <span>↗</span>
+        </button>
+
+        <p class="form-disclaimer">
+          Your enquiry will open in WhatsApp for you to send.
+          Do not include passwords, OTPs or sensitive financial information.
+        </p>
+
+      </form>
+
+    </section>
+
+    <!-- GOOGLE MAPS LOCATION -->
+    <section class="map-section" id="location">
+
+      <div class="map-heading">
+
+        <span class="section-label">FIND US</span>
+
+        <h2>
+          Visit our <span>centre.</span>
+        </h2>
+
+        <p>
+          Plot No. 48, Balaji Nagar, New Bhokardan,
+          Maharashtra – 431114.
+        </p>
+
+      </div>
+
+      <div class="map-frame">
+
+        <iframe
+          src="https://www.google.com/maps?q=Plot%20No.%2048%2C%20Balaji%20Nagar%2C%20New%20Bhokardan%2C%20Bhokardan%2C%20Maharashtra%20431114&output=embed"
+          title="Gurukrupa Xerox location on Google Maps"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+
+      </div>
+
+      <a
+        class="map-directions"
+        href="https://www.google.com/maps/search/?api=1&query=Plot+No.+48+Balaji+Nagar+New+Bhokardan+431114"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open Directions in Google Maps ↗
+      </a>
+
+    </section>
+
   </main>
 
   <!-- FOOTER -->
@@ -305,12 +496,14 @@
       <div class="footer-brand">
 
         <a href="index.html" class="brand">
+
           <div class="brand-logo">G</div>
 
           <div class="brand-text">
             <strong>GURUKRUPA</strong>
             <span>XEROX & MULTISERVICES</span>
           </div>
+
         </a>
 
         <p>
@@ -321,35 +514,56 @@
       </div>
 
       <div class="footer-links">
+
         <strong>QUICK LINKS</strong>
+
         <a href="index.html">Home</a>
         <a href="services.html">Services</a>
         <a href="print-online.html">Print Online</a>
         <a href="about.html">About Us</a>
         <a href="gallery.html">Gallery</a>
         <a href="contact.html">Contact</a>
+
       </div>
 
       <div class="footer-links">
+
         <strong>OUR SERVICES</strong>
+
         <a href="services.html">Xerox & Printing</a>
         <a href="services.html">Online Form Filling</a>
         <a href="services.html">Income Tax Work</a>
         <a href="services.html">Government Services</a>
         <a href="services.html">Data Entry</a>
         <a href="services.html">Business Support</a>
+
       </div>
 
       <div class="footer-contact">
+
         <strong>GET IN TOUCH</strong>
 
-        <p>New Bhokardan, Maharashtra – 431114</p>
+        <p>
+          Plot No. 48, Balaji Nagar,<br>
+          New Bhokardan, Maharashtra – 431114
+        </p>
 
-        <a href="tel:+917745062299">+91 77450 62299</a>
+        <a href="tel:+917745062299">
+          +91 77450 62299
+        </a>
 
         <a href="mailto:narayan.katore9@gmail.com">
           narayan.katore9@gmail.com
         </a>
+
+        <a
+          href="https://wa.me/917745062299"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp Us ↗
+        </a>
+
       </div>
 
     </div>
@@ -367,6 +581,18 @@
     </div>
 
   </footer>
+
+  <!-- FLOATING WHATSAPP BUTTON -->
+  <a
+    class="floating-whatsapp"
+    href="https://wa.me/917745062299?text=Hello%20Gurukrupa%20Xerox%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat with Gurukrupa Xerox on WhatsApp"
+  >
+    <span class="whatsapp-symbol" aria-hidden="true">✆</span>
+    <span class="whatsapp-label">Chat with us</span>
+  </a>
 
 </body>
 </html>
