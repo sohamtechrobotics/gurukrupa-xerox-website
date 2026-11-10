@@ -92,6 +92,7 @@
           <option value="READY_FOR_COLLECTION">Ready for collection</option>
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled</option>
+          <option value="ARCHIVED">Archived (paid cancelled)</option>
         </select>
       </div>
       <div class="orders" id="ordersList"><div class="panel empty">Loading orders…</div></div>
@@ -132,20 +133,21 @@
     return new Date(value).toLocaleString('en-IN', {dateStyle:'medium',timeStyle:'short'});
   }
   function renderStats() {
+    const activeOrders = orders.filter(o => !o.archived_at);
     const today = new Date();
     const sameDay = value => {
       const d = new Date(value);
       return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
     };
-    const todays = orders.filter(o => sameDay(o.created_at));
+    const todays = activeOrders.filter(o => sameDay(o.created_at));
     const todaySales = todays.reduce((sum,o) => sum + Number(o.estimated_total || 0),0);
-    const attention = orders.filter(o => ['UPLOAD_PENDING','ORDER_RECEIVED'].includes(o.status)).length;
-    const processing = orders.filter(o => o.status === 'PROCESSING').length;
-    const ready = orders.filter(o => o.status === 'READY_FOR_COLLECTION').length;
-    const completed = orders.filter(o => o.status === 'COMPLETED').length;
+    const attention = activeOrders.filter(o => ['UPLOAD_PENDING','ORDER_RECEIVED'].includes(o.status)).length;
+    const processing = activeOrders.filter(o => o.status === 'PROCESSING').length;
+    const ready = activeOrders.filter(o => o.status === 'READY_FOR_COLLECTION').length;
+    const completed = activeOrders.filter(o => o.status === 'COMPLETED').length;
     // Only orders explicitly marked PENDING belong in the payment-pending total.
     // NOT_REQUIRED_YET means payment has not been enabled/initiated for that order.
-    const pendingAmount = orders.filter(o => String(o.payment_status || '').toUpperCase() === 'PENDING')
+    const pendingAmount = activeOrders.filter(o => String(o.payment_status || '').toUpperCase() === 'PENDING')
       .reduce((sum,o) => sum + Number(o.estimated_total || 0),0);
     $('todayOrders').textContent = todays.length;
     $('todaySales').textContent = money(todaySales);
@@ -158,7 +160,7 @@
       .filter(r => String(r.request_status || '').toUpperCase() === 'PENDING_VERIFICATION')
       .reduce((sum,r) => sum + Number(r.estimated_total || 0),0);
     $('paymentPending').textContent = money(pendingAmount + requestPendingAmount);
-    $('totalCount').textContent = orders.length;
+    $('totalCount').textContent = activeOrders.length;
     renderOrdersChart();
   }
   function renderOrdersChart() {
@@ -166,10 +168,10 @@
     const days = [];
     for (let offset=6; offset>=0; offset--) {
       const d = new Date(now.getFullYear(),now.getMonth(),now.getDate()-offset);
-      const count = orders.filter(o => {
+      const count = orders.filter(o => !o.archived_at && (() => {
         const x = new Date(o.created_at);
         return x.getFullYear()===d.getFullYear() && x.getMonth()===d.getMonth() && x.getDate()===d.getDate();
-      }).length;
+      })()).length;
       days.push({date:d,count,label:d.toLocaleDateString('en-IN',{weekday:'short'})});
     }
     const max = Math.max(1,...days.map(x=>x.count));
@@ -184,7 +186,9 @@
     const filter = $('statusFilter').value;
     const filtered = orders.filter(o => {
       const hay = [o.order_number,o.customer_name,o.customer_phone].join(' ').toLowerCase();
-      return (!term || hay.includes(term)) && (!filter || o.status === filter);
+      const archiveMatch = filter === 'ARCHIVED' ? !!o.archived_at : !o.archived_at;
+      const statusMatch = !filter || filter === 'ARCHIVED' || o.status === filter;
+      return archiveMatch && statusMatch && (!term || hay.includes(term));
     });
     if (!filtered.length) {
       $('ordersList').innerHTML = `<div class="panel empty">${orders.length ? 'No orders match this filter.' : 'No print orders have arrived yet.'}</div>`;
@@ -195,7 +199,7 @@
       return `<article class="order">
         <div class="order-top">
           <div><div class="order-id">${safe(o.order_number || 'Order')}</div><div class="muted">${dateText(o.created_at)}</div></div>
-          <span class="tag">${safe(STATUS_LABELS[o.status] || o.status || 'Unknown')}</span>
+          <span class="tag">${o.archived_at ? 'Archived · ' : ''}${safe(STATUS_LABELS[o.status] || o.status || 'Unknown')}</span>
         </div>
         <div class="details">
           <div class="detail"><span>Customer</span><strong>${safe(o.customer_name)}</strong></div>
@@ -213,11 +217,11 @@
         <div class="order-bottom">
           <span class="muted">Collection: ${safe(o.collection_method || 'Shop collection')}</span>
           <div class="status-actions">
-            ${o.status === 'CANCELLED' ? `<button class="btn small" style="background:#7f3038;border-color:#a64c56;color:#fff" data-delete-cancelled="${safe(o.id)}" data-order-number="${safe(o.order_number || 'this order')}">Delete cancelled order</button>` : ''}
-            <select class="status" data-status-for="${safe(o.id)}" aria-label="Update status for ${safe(o.order_number)}">
+            ${o.archived_at ? `<button class="btn secondary small" data-restore-archived="${safe(o.id)}" data-order-number="${safe(o.order_number || 'this order')}">Restore order</button>` : (o.status === 'CANCELLED' ? (String(o.payment_status || '').toUpperCase() === 'PAID' ? `<button class="btn small" data-archive-cancelled="${safe(o.id)}" data-order-number="${safe(o.order_number || 'this order')}">Archive paid order</button>` : `<button class="btn small" style="background:#7f3038;border-color:#a64c56;color:#fff" data-delete-cancelled="${safe(o.id)}" data-order-number="${safe(o.order_number || 'this order')}">Delete unpaid order</button>`) : '')}
+            ${o.archived_at ? '' : `<select class="status" data-status-for="${safe(o.id)}" aria-label="Update status for ${safe(o.order_number)}">
               ${Object.entries(STATUS_LABELS).map(([key,label]) => `<option value="${key}" ${o.status===key?'selected':''}>${label}</option>`).join('')}
             </select>
-            <button class="btn small" data-save-status="${safe(o.id)}">Save status</button>
+            <button class="btn small" data-save-status="${safe(o.id)}">Save status</button>`}
           </div>
         </div>
       </article>`;
@@ -229,39 +233,50 @@
       btn.addEventListener('click', () => openOrderFiles(btn.dataset.orderFiles, btn));
     });
     document.querySelectorAll('[data-delete-cancelled]').forEach(btn => {
-      btn.addEventListener('click', () => deleteCancelledOrder(btn.dataset.deleteCancelled, btn.dataset.orderNumber, btn));
+      btn.addEventListener('click', () => manageCancelledOrder(btn.dataset.deleteCancelled, 'delete', btn.dataset.orderNumber, btn));
+    });
+    document.querySelectorAll('[data-archive-cancelled]').forEach(btn => {
+      btn.addEventListener('click', () => manageCancelledOrder(btn.dataset.archiveCancelled, 'archive', btn.dataset.orderNumber, btn));
+    });
+    document.querySelectorAll('[data-restore-archived]').forEach(btn => {
+      btn.addEventListener('click', () => manageCancelledOrder(btn.dataset.restoreArchived, 'restore', btn.dataset.orderNumber, btn));
     });
   }
 
-  async function deleteCancelledOrder(orderId, orderNumber, button) {
+  async function manageCancelledOrder(orderId, action, orderNumber, button) {
     const order = orders.find(item => item.id === orderId);
-    const isPaid = String(order?.payment_status || '').toUpperCase() === 'PAID';
-    const warning = isPaid
-      ? `
-
-WARNING: This order is marked PAID. Deleting it permanently removes its order record and uploaded documents. Make sure you have separately retained the PhonePe transaction/UTR and accounting record. This does NOT issue a refund.`
-      : `
-
-This permanently removes the cancelled order and its uploaded documents. This cannot be undone.`;
-    const confirmed = window.confirm(`Permanently delete ${orderNumber}?${warning}
-
-Continue?`);
-    if (!confirmed) return;
+    if (!order) { alert('Order not found. Refresh the dashboard.'); return; }
+    const messages = {
+      archive: `Archive paid cancelled order ${orderNumber}?\n\nThe order and uploaded documents will be retained. It will disappear from the normal order list but remain available under “Archived”. No refund is issued.`,
+      delete: `Permanently delete unpaid cancelled order ${orderNumber}?\n\nThe order record and uploaded documents will be removed. This cannot be undone.`,
+      restore: `Restore ${orderNumber} to the normal order list?\n\nIts original cancelled status and payment history will remain unchanged.`
+    };
+    if (!window.confirm(messages[action])) return;
     const originalText = button.textContent;
     button.disabled = true;
-    button.textContent = 'Deleting…';
+    button.textContent = action === 'archive' ? 'Archiving…' : action === 'restore' ? 'Restoring…' : 'Deleting…';
     try {
       const { data, error } = await client.functions.invoke('delete-cancelled-order', {
-        body: { order_id: orderId }
+        body: { order_id: orderId, action }
       });
       if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || 'Could not delete this order.');
-      orders = orders.filter(order => order.id !== orderId);
+      if (!data?.success) throw new Error(data?.error || 'The order action could not be completed.');
+      if (action === 'delete') {
+        orders = orders.filter(item => item.id !== orderId);
+        alert(`${orderNumber} was permanently deleted. ${Number(data.deleted_files || 0)} uploaded document(s) removed.`);
+      } else if (action === 'archive') {
+        const item = orders.find(item => item.id === orderId);
+        if (item) item.archived_at = data.archived_at || new Date().toISOString();
+        alert(`${orderNumber} was archived. Its payment and document records have been retained.`);
+      } else {
+        const item = orders.find(item => item.id === orderId);
+        if (item) item.archived_at = null;
+        alert(`${orderNumber} was restored to the normal order list.`);
+      }
       renderOrders();
-      alert(`${orderNumber} was deleted. ${Number(data.deleted_files || 0)} uploaded document(s) removed.`);
     } catch (error) {
-      console.error('Cancelled order deletion failed:', error);
-      alert('Could not delete this order: ' + (error.message || 'Unknown error'));
+      console.error('Cancelled order action failed:', error);
+      alert('Could not complete this action: ' + (error.message || 'Unknown error'));
       button.disabled = false;
       button.textContent = originalText;
     }
