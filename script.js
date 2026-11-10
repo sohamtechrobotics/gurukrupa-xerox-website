@@ -553,8 +553,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const t = homeTranslations[language] || homeTranslations.en;
 
     saveLanguage(language);
+    translateWorkflowPage(language);
 
     setList("#navLinks a", t.nav);
+    const navPrintItem = $('#navLinks a[href="print-online.html"]');
+    if (navPrintItem) navPrintItem.textContent = language === "mr" ? "ऑनलाइन प्रिंटिंग" : "Print Online";
+    const navTrackItem = $('#navLinks a[href="track-order.html"]');
+    if (navTrackItem) navTrackItem.textContent = language === "mr" ? "ऑर्डरची स्थिती पाहा" : "Track Order";
 
     put(".eyebrow", t.heroEyebrow);
     putHTML(".hero h1", t.heroTitle);
@@ -855,6 +860,174 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (languageSelect) languageSelect.value = language;
   }
+
+
+  /* =====================================================
+     LIVE LANGUAGE SUPPORT: PRINT ONLINE + TRACK ORDER
+     These pages use the same EN / मराठी / हिन्दी switcher.
+     All form values, IDs, API requests and pricing logic stay unchanged.
+     ===================================================== */
+
+  function translateWorkflowPage(language) {
+    const page = location.pathname.split("/").pop() || "index.html";
+    const mr = language === "mr";
+    if (!mr) return; // English is the source HTML; Hindi remains on its existing fallback.
+
+    const text = (selector, value, root = document) => {
+      const el = root.querySelector(selector);
+      if (el && value != null) el.textContent = value;
+    };
+    const html = (selector, value) => {
+      const el = document.querySelector(selector);
+      if (el && value != null) el.innerHTML = value;
+    };
+    const list = (selector, values) => {
+      document.querySelectorAll(selector).forEach((el, i) => {
+        if (values[i] != null) el.textContent = values[i];
+      });
+    };
+    const options = (selector, values) => {
+      const el = document.querySelector(selector);
+      if (el) [...el.options].forEach((option, i) => {
+        if (values[i] != null) option.textContent = values[i];
+      });
+    };
+
+    if (page === "print-online.html") {
+      text(".print-section .print-content .section-label", "प्रिंटिंगची अधिक सोयीस्कर पद्धत");
+      html(".print-section .print-content h2", "स्मार्ट पद्धतीने प्रिंट करा.<br><span>दुकानातून प्रिंट घ्या.</span>");
+      text(".print-section .print-content > p", "तुमची कागदपत्रे ऑनलाइन तयार करा आणि गुरुकृपा झेरॉक्स येथे प्रिंट करून घ्या. फाइल्स निवडा, तपासा आणि सोयीस्करपणे दुकानातून प्रिंट घ्या.");
+      list(".print-features p", ["एकाहून अधिक फाइल्स", "फाइल्स निवडणे सोपे", "दुकानातून प्रिंट घ्या"]);
+      text(".print-section .btn-light", "कागदपत्रे निवडा ↓");
+
+      const sectionLabels = [...document.querySelectorAll(".section-label")];
+      const labels = ["टप्पा ०१ — कागदपत्रांची निवड", "कागदपत्रांचे पूर्वदृश्य", "टप्पा ०२ — प्रिंटिंगचे पर्याय", "तुमची अंदाजे किंमत", "टप्पा ०३ — ऑर्डर तपासा", "ग्राहकाची माहिती", "पेमेंट — PHONEPE / UPI", "प्रक्रिया कशी असेल"];
+      sectionLabels.forEach((el, i) => { if (labels[i]) el.textContent = labels[i]; });
+
+      const headings = [
+        [".upload-heading h2", "तुमची कागदपत्रे निवडा."],
+        [".upload-panel h3", "निवडलेली कागदपत्रे"],
+        [".preview-placeholder strong", "पूर्वदृश्य येथे दिसेल"],
+        [".settings-heading h2", "प्रिंटिंगचे पर्याय निवडा."],
+        [".review-heading h2", "ऑर्डर तपासून पुढे जा."],
+        [".customer-details h3", "आम्ही कोणाशी संपर्क साधावा?"],
+        [".how-section h2", "प्रिंटिंगची प्रक्रिया सोपी." ]
+      ];
+      headings.forEach(([s,v]) => text(s,v));
+
+      const replacements = [
+        ["#dropzone strong","कागदपत्रे निवडा"],
+        ["#dropzone span:not(.upload-icon)","येथे क्लिक करा किंवा फाइल्स ड्रॅग करून सोडा"],
+        ["#dropzone small","PDF, JPG आणि PNG · प्रत्येक फाइल कमाल १५ MB"],
+        ["#clearFiles","सर्व फाइल्स काढून टाका"],
+        [".file-list-empty strong","अद्याप कोणतीही कागदपत्रे जोडलेली नाहीत"],
+        [".file-list-empty p","तुम्ही निवडलेल्या फाइल्स येथे दिसतील."],
+        [".preview-indicator","स्थानिक पूर्वदृश्य"],
+        [".preview-placeholder strong","पूर्वदृश्य येथे दिसेल"],
+        [".preview-placeholder p","पाहण्यासाठी PDF कागदपत्र निवडा."],
+        [".preview-help","PDF फाइल्ससाठी पूर्वदृश्य उपलब्ध आहे."],
+        [".info-box strong","कृपया नोंद घ्या"],
+        [".info-box p","PDF मधील पानांची संख्या आपोआप मोजली जाते. प्रत्येक JPG किंवा PNG फाइल एक पान मानली जाते. अचूक पानसंख्या आणि किंमत मिळण्यासाठी Word फाइल अपलोड करण्यापूर्वी PDF स्वरूपात जतन करा."],
+        ["#printModeLabel","प्रिंटचा प्रकार"],
+        ["label[for='pagesPerSheet']","एका शीटवर किती पाने"],
+        ["label[for='duplexMode']","प्रिंटिंगची बाजू"],
+        ["label[for='pageRanges']","निवडक पानांची मर्यादा (ऐच्छिक)"],
+        ["#pageRangeHelp","सर्व पाने प्रिंट करायची असल्यास रिकामे ठेवा. पानांची मर्यादा एकत्रित कागदपत्रांवर लागू होईल."],
+        ["label[for='orientation']","पानाची दिशा"],
+        ["label[for='pageCount']","अपलोड केलेली एकूण पाने"],
+        ["#pageCountHelp","निवडलेल्या PDF आणि प्रतिमांमधून पानांची संख्या मोजली जाते."],
+        ["label[for='copyCount']","प्रतींची संख्या"],
+        [".settings-hint","शीटची संख्या = निवडलेली पाने ÷ (एका शीटवरील पाने × प्रिंटिंगच्या बाजू), आणि पुढील पूर्णांक घेतला जातो. लांब किंवा छोट्या बाजूने उलटल्याने शीटची संख्या बदलत नाही; फक्त उलटण्याची दिशा बदलते."],
+        [".estimate-disclaimer","अंदाजे किंमत दुकानाच्या A4 प्रत्यक्ष शीटच्या दरांनुसार आहे. प्रिंटिंगचे पर्याय तुमच्या विनंतीसोबत नोंदवले जातील. अंतिम प्रिंटिंग मांडणी दुकानात केली जाईल."],
+        [".review-documents h3","निवडलेली कागदपत्रे"],
+        [".review-preferences h3","प्रिंटिंगचे पर्याय"],
+        [".customer-section .section-label","ग्राहकाची माहिती"],
+        ["label[for='customerName']","तुमचे नाव"],
+        ["label[for='customerPhone']","मोबाईल क्रमांक"],
+        [".customer-help","ऑर्डरची खात्री करण्यासाठी आवश्यक असल्यास आम्ही तुमच्याशी संपर्क साधू."],
+        [".collection-box strong","दुकानातून प्रिंट घ्या"],
+        [".phonepe-payment-intro","PhonePe किंवा इतर UPI अॅप वापरून गुरुकृपा झेरॉक्सचा QR कोड स्कॅन करा. खाली दाखवलेली अचूक रक्कम भरा."],
+        [".phonepe-warning","पेमेंट करण्यापूर्वी UPI अॅपमध्ये प्राप्तकर्त्याचे नाव गुरुकृपा झेरॉक्स आहे याची खात्री करा. इतर कोणालाही पैसे पाठवू नका."],
+        ["label[for='utrReference']","UPI व्यवहार संदर्भ क्रमांक / UTR"],
+        ["#utrReferenceHelp","यशस्वी पेमेंटच्या तपशीलात हा संदर्भ क्रमांक मिळेल. तुमचा UPI PIN किंवा OTP येथे टाकू नका."],
+        [".phonepe-confirm-row span","मी अचूक रक्कम भरली आहे आणि पेमेंट यशस्वी झाल्याची खात्री केली आहे."],
+        ["#sendOrderButton","पेमेंट पडताळणीसाठी पाठवा ↗"],
+        [".order-submit-note","तुमची कागदपत्रे आणि पेमेंट संदर्भ सुरक्षितपणे पाठवले जातील. दुकानाकडून पेमेंटची पडताळणी होईपर्यंत तुमची प्रिंट ऑर्डर स्वीकारली जाणार नाही."],
+        [".how-section > .container > p","कागदपत्रांची प्रिंटिंग सोपी आणि सोयीस्कर करण्यासाठी ही प्रक्रिया आहे."],
+        [".footer-links h4","महत्त्वाचे दुवे"]
+      ];
+      replacements.forEach(([s,v]) => text(s,v));
+
+      options("#printMode", ["काळा-पांढरा","रंगीत"]);
+      options("#pagesPerSheet", ["एका शीटवर १ पान","एका शीटवर २ पाने","एका शीटवर ४ पाने","एका शीटवर ६ पाने","एका शीटवर ९ पाने","एका शीटवर १६ पाने"]);
+      options("#duplexMode", ["एकाच बाजूने","दोन्ही बाजूंनी — लांब बाजूने उलट","दोन्ही बाजूंनी — छोट्या बाजूने उलट"]);
+      options("#orientation", ["आपोआप (कागदपत्रानुसार)","उभे","आडवे"]);
+
+      // Translate fixed labels while leaving calculated numbers and rupee amounts intact.
+      const labelMap = {
+        "Paper size":"कागदाचा आकार","Selected pages":"निवडलेली पाने","Pages per sheet":"एका शीटवरील पाने",
+        "Duplex":"प्रिंटिंगची बाजू","Rate":"दर","Sheets per copy":"प्रति प्रत शीट",
+        "Copies":"प्रती","Total sheets":"एकूण शीट","Print mode":"प्रिंटचा प्रकार",
+        "Page range":"पानांची मर्यादा","All pages":"सर्व पाने","Orientation":"पानाची दिशा",
+        "Selected pages per copy":"प्रति प्रती निवडलेली पाने","Number of copies":"प्रतींची संख्या",
+        "Estimated total":"अंदाजे एकूण","Amount to pay":"भरायची रक्कम"
+      };
+      document.querySelectorAll(".estimate-line span,.review-detail span,.estimate-total span,.phonepe-amount span").forEach(el => {
+        if (labelMap[el.textContent.trim()]) el.textContent = labelMap[el.textContent.trim()];
+      });
+      text("#pageRanges",""); // no-op; preserve any customer-entered value
+      const range = document.querySelector("#pageRanges");
+      if (range) range.placeholder = "उदा. १-१०, १२, १४-१६";
+      const name = document.querySelector("#customerName");
+      if (name) name.placeholder = "तुमचे पूर्ण नाव लिहा";
+      const phone = document.querySelector("#customerPhone");
+      if (phone) phone.placeholder = "१० अंकी मोबाईल क्रमांक";
+      const utr = document.querySelector("#utrReference");
+      if (utr) utr.placeholder = "UTR / व्यवहार संदर्भ क्रमांक लिहा";
+
+      // Dynamic status text is also translated when the user switches language.
+      const count = document.getElementById("fileCount");
+      if (count && count.textContent.trim() === "No files selected") count.textContent = "कोणतीही फाइल निवडलेली नाही";
+      const reviewCount = document.getElementById("reviewDocumentCount");
+      if (reviewCount && reviewCount.textContent.trim() === "0 files") reviewCount.textContent = "० फाइल्स";
+    }
+
+    if (page === "track-order.html") {
+      const map = [
+        [".tracking-heading .section-label","ग्राहक ऑर्डर ट्रॅकिंग"],
+        [".tracking-heading h1","तुमची ऑर्डर कुठपर्यंत आली आहे ते जाणून घ्या."],
+        [".tracking-heading > p","ऑर्डर क्रमांक किंवा पेमेंट विनंती क्रमांक आणि ऑर्डर देताना वापरलेला मोबाईल क्रमांक टाका. तुमची माहिती सुरक्षितपणे तपासली जाईल."],
+        ["label[for='reference']","ऑर्डर क्रमांक / पेमेंट विनंती क्रमांक"],
+        [".tracking-help","ऑर्डर मंजूर झाल्यानंतर GKX क्रमांक वापरा. पेमेंटची पडताळणी सुरू असल्यास PAY विनंती क्रमांक वापरा."],
+        ["label[for='phone']","नोंदणीकृत मोबाईल क्रमांक"],
+        ["#trackingButton","माझी ऑर्डर पाहा"],
+        ["#resultTitle","ऑर्डरची माहिती"],
+        [".tracking-contact","मदत हवी आहे? येथे फोन करा किंवा गुरुकृपा झेरॉक्स, प्लॉट क्र. ४८, बालाजी नगर, न्यू भोकरदन, भोकरदन येथे भेट द्या."]
+      ];
+      map.forEach(([s,v]) => text(s,v));
+      const ref = document.querySelector("#reference");
+      if (ref) ref.placeholder = "उदा. GKX-20261110-000002 किंवा PAY-...";
+      const phone = document.querySelector("#phone");
+      if (phone) phone.placeholder = "१० अंकी मोबाईल क्रमांक";
+      const message = document.querySelector("#trackingMessage");
+      if (message && message.textContent === "Checking…") message.textContent = "तपासत आहे…";
+      const status = document.querySelector("#resultStatus");
+      if (status) {
+        const statuses = {
+          "Order received":"ऑर्डर प्राप्त झाली","Printing in progress":"प्रिंटिंग सुरू आहे",
+          "Ready for collection":"प्रिंट तयार आहे — घेऊन जा","Completed":"ऑर्डर पूर्ण झाली",
+          "Order update":"ऑर्डरची माहिती","Payment request update":"पेमेंट विनंतीची माहिती",
+          "Your print order":"तुमची प्रिंट ऑर्डर"
+        };
+        if (statuses[status.textContent.trim()]) status.textContent = statuses[status.textContent.trim()];
+      }
+      document.querySelectorAll("#trackingTimeline [data-stage]").forEach((el, i) => {
+        const labels = ["ऑर्डर प्राप्त झाली","प्रिंटिंग सुरू आहे","प्रिंट तयार आहे","ऑर्डर पूर्ण झाली"];
+        if (labels[i]) el.textContent = labels[i];
+      });
+    }
+  }
+
 
   /* =====================================================
      INITIALISE LANGUAGE
