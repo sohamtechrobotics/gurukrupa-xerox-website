@@ -248,12 +248,46 @@
           <div class="detail"><span>Documents</span><strong>${files} file(s) uploaded privately</strong></div>
         </div>
         <div class="order-bottom">
-          <span class="muted">Do not accept for printing until the exact amount and UTR are confirmed as credited in PhonePe Business.</span>
-          <span class="tag">${safe(r.payment_status || 'PENDING')}</span>
+          <span class="muted">Verify the exact amount and UTR in PhonePe Business before approving.</span>
+          <div class="status-actions">
+            <button class="btn secondary small" data-review="reject" data-request-id="${safe(r.id)}">Reject request</button>
+            <button class="btn small" data-review="approve" data-request-id="${safe(r.id)}">Approve payment</button>
+          </div>
         </div>
       </article>`;
     }).join('');
+    document.querySelectorAll('[data-review]').forEach(button => {
+      button.addEventListener('click', () => reviewPaymentRequest(
+        button.dataset.requestId, button.dataset.review, button
+      ));
+    });
     renderStats();
+  }
+
+  async function reviewPaymentRequest(requestId, action, button) {
+    const request = paymentRequests.find(item => item.id === requestId);
+    if (!request) { alert('This payment request is no longer available. Refresh the dashboard.'); return; }
+    const label = action === 'approve' ? 'approve this payment and create the print order' : 'reject this payment request';
+    if (!confirm(`Are you sure you want to ${label}?\n\nRequest: ${request.request_number || requestId}\nCustomer: ${request.customer_name}\nAmount: ${money(request.estimated_total)}\n\nFor approval, first confirm the exact payment in PhonePe Business.`)) return;
+    let adminNote = null;
+    if (action === 'reject') adminNote = prompt('Optional reason for rejection:') || null;
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = action === 'approve' ? 'Approving…' : 'Rejecting…';
+    try {
+      const { data, error } = await client.functions.invoke('review-payment-request', {
+        body: { request_id: requestId, action, admin_note: adminNote }
+      });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'The review could not be completed.');
+      alert(action === 'approve' ? `Payment approved. Print order created: ${data.order_number || data.order_id}` : 'Payment request rejected.');
+      await Promise.all([loadPaymentRequests(), loadOrders()]);
+    } catch (error) {
+      console.error('Payment review failed:', error);
+      alert('Could not review this request: ' + (error.message || 'Unknown error'));
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }
 
   async function loadPaymentRequests() {
