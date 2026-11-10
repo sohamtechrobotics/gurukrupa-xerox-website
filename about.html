@@ -13,8 +13,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script src="script.js" defer></script>
+<link rel="stylesheet" href="style.css?v=theme-spacing-final-20261110">
+<script src="script.js?v=theme-spacing-final-20261110" defer></script>
+<script>
+try { document.documentElement.setAttribute('data-theme', localStorage.getItem('gurukrupa-theme') || 'light'); } catch(e) {}
+</script>
 </head>
 <body>
 <header class="navbar">
@@ -30,7 +33,8 @@
 
       <a href="print-online.html">Print Online</a>
       <a href="track-order.html">Track Order</a></nav>
-<div class="nav-actions"><a href="print-online.html" class="nav-print">Print Online <span>↗</span></a><button class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button></div>
+<div class="nav-actions">
+<button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode"><span class="theme-toggle-icon" aria-hidden="true">☾</span></button><a href="print-online.html" class="nav-print">Print Online <span>↗</span></a><button class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button></div>
 </header>
 
 <main>
