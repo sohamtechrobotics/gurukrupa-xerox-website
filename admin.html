@@ -101,7 +101,7 @@
 <script>
 (() => {
   const SUPABASE_URL = 'https://fnsueklwnlndbismlwda.supabase.co';
-  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_YeQac-5UJ8yjNb1xzyU7BA_luVBWfZ7';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable-YeQac-5UJ8yjNb1xzyU7BA_luVBWfZ7';
   const ADMIN_EMAIL = 'narayan.katore9@gmail.com';
   const STATUS_LABELS = {
     UPLOAD_PENDING:'Upload pending', ORDER_RECEIVED:'Order received',
@@ -177,7 +177,7 @@
       return `<div class="chart-col"><span class="bar-value">${day.count}</span><div class="bar-wrap"><div class="bar" style="height:${height}%"></div></div><span class="bar-label">${day.label}</span></div>`;
     }).join('');
   }
-  function renderOrders() {
+    function renderOrders() {
     renderStats();
     const term = $('searchBox').value.trim().toLowerCase();
     const filter = $('statusFilter').value;
@@ -255,6 +255,7 @@
     }).join('');
     renderStats();
   }
+
   async function loadPaymentRequests() {
     const {data,error} = await client.from('print_order_requests').select('*').order('created_at',{ascending:false}).limit(200);
     if (error) throw error;
@@ -269,6 +270,7 @@
     previousIds = new Set(orders.map(o => o.id));
     renderOrders();
   }
+
   async function updateStatus(id,status,button) {
     button.disabled = true;
     const oldText = button.textContent;
@@ -284,6 +286,7 @@
     if (item) item.status = status;
     renderOrders();
   }
+
   function subscribeRealtime() {
     if (channel) client.removeChannel(channel);
     channel = client.channel('admin-print-orders')
@@ -323,6 +326,7 @@
       })
       .subscribe(status => setConnection(status === 'SUBSCRIBED' ? 'Connected' : status, status === 'SUBSCRIBED'));
   }
+
   async function showDashboard(session) {
     if (!session || session.user.email?.toLowerCase() !== ADMIN_EMAIL) {
       await client.auth.signOut();
@@ -345,6 +349,7 @@
       setConnection('Connection error');
     }
   }
+
   $('loginForm').addEventListener('submit', async event => {
     event.preventDefault();
     $('loginError').textContent = '';
@@ -356,25 +361,25 @@
     if (error) { $('loginError').textContent = error.message; return; }
     await showDashboard(data.session);
   });
+
   $('logoutBtn').addEventListener('click', async () => {
     if (channel) await client.removeChannel(channel);
     await client.auth.signOut();
-    orders = [];
-    paymentRequests = [];
     $('dashboard').classList.add('hidden');
     $('loginPanel').classList.remove('hidden');
     $('password').value = '';
     setConnection('Not connected');
   });
-  $('searchBox').addEventListener('input',renderOrders);
-  $('statusFilter').addEventListener('change',renderOrders);
+
+  $('searchBox').addEventListener('input', renderOrders);
+  $('statusFilter').addEventListener('change', renderOrders);
 
   client.auth.getSession().then(({data}) => {
     if (data.session) showDashboard(data.session);
   });
+
   client.auth.onAuthStateChange((_event,session) => {
-    if (!session) return;
-    if (session.user.email?.toLowerCase() === ADMIN_EMAIL && $('dashboard').classList.contains('hidden')) showDashboard(session);
+    if (session) showDashboard(session);
   });
 })();
 </script>
