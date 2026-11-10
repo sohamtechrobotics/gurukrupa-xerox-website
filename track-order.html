@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a33">
+  <title>Track Your Print Order | Gurukrupa Xerox</title>
+  <meta name="description" content="Securely check your Gurukrupa Xerox print order or payment request status.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .tracking-main{max-width:920px;margin:0 auto;padding:76px 5% 90px}
+    .tracking-heading{text-align:center;max-width:680px;margin:0 auto 34px}
+    .tracking-heading h1{font-family:Manrope,sans-serif;color:#071a33;font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;margin:12px 0}
+    .tracking-heading h1 span{color:#a77a35}
+    .tracking-heading p{color:#687587;line-height:1.7}
+    .tracking-card{max-width:650px;margin:0 auto;background:#fff;border:1px solid #e7eaf0;border-radius:18px;padding:clamp(22px,4vw,36px);box-shadow:0 18px 55px #071a3310}
+    .tracking-card label{display:block;color:#17283e;font-weight:700;font-size:.9rem;margin:16px 0 8px}
+    .tracking-card input{width:100%;min-height:50px;padding:12px 14px;border:1px solid #d9dfe8;border-radius:9px;font:inherit;color:#17283e;background:#fff}
+    .tracking-card input:focus{outline:3px solid #d7b77855;border-color:#a77a35}
+    .tracking-help{font-size:.8rem;color:#748094;line-height:1.55;margin:7px 0 0}
+    .tracking-submit{width:100%;min-height:52px;border:0;border-radius:9px;background:#071a33;color:#fff;font:inherit;font-weight:800;margin-top:23px;cursor:pointer}
+    .tracking-submit:disabled{opacity:.6;cursor:wait}
+    .tracking-message{min-height:1.3em;margin:13px 0 0;font-size:.88rem;color:#b42318}
+    .tracking-result{display:none;max-width:760px;margin:24px auto 0;border:1px solid #e4e9f0;border-radius:17px;background:#fff;padding:clamp(22px,4vw,32px);box-shadow:0 15px 45px #071a330d}
+    .tracking-result.visible{display:block}
+    .tracking-result-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .tracking-reference{font-weight:800;color:#a77a35;font-family:Manrope,sans-serif;overflow-wrap:anywhere}
+    .tracking-status{display:inline-flex;padding:8px 13px;border-radius:99px;background:#edf4ef;color:#17633c;font-weight:800;font-size:.8rem}
+    .tracking-result h2{font-family:Manrope,sans-serif;color:#071a33;margin:20px 0 8px;font-size:1.55rem}
+    .tracking-result p{color:#657286;line-height:1.65}
+    .tracking-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+    .tracking-meta div{padding:14px;border-radius:10px;background:#f6f8fb}
+    .tracking-meta span{display:block;color:#788496;font-size:.73rem;margin-bottom:5px}
+    .tracking-meta strong{color:#17283e;font-size:.95rem;overflow-wrap:anywhere}
+    .tracking-timeline{margin:25px 0 0;padding:0;list-style:none;display:grid;gap:12px}
+    .tracking-timeline li{display:flex;align-items:center;gap:11px;color:#a0a9b5;font-size:.9rem}
+    .tracking-timeline li::before{content:"";width:11px;height:11px;border:2px solid #cbd2dc;border-radius:50%;flex:none}
+    .tracking-timeline li.done{color:#17633c;font-weight:700}
+    .tracking-timeline li.done::before{background:#248456;border-color:#248456;box-shadow:0 0 0 4px #2484561a}
+    .tracking-contact{text-align:center;color:#788496;font-size:.85rem;margin:25px auto 0;line-height:1.6}
+    .tracking-contact a{color:#9a702b;font-weight:800}
+    @media(max-width:600px){.tracking-main{padding-top:52px}.tracking-meta{grid-template-columns:1fr 1fr}.tracking-meta div:last-child{grid-column:1/-1}}
+  </style>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="brand">
+    <span class="brand-logo">G</span>
+    <span class="brand-text"><strong>GURUKRUPA XEROX</strong><span>& SOHAM MULTISERVICES</span></span>
+  </a>
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a><a href="services.html">Services</a>
+    <a href="print-online.html">Print Online</a><a href="track-order.html" aria-current="page">Track Order</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="nav-actions">
+    <a href="print-online.html" class="nav-print">Print Online <span>↗</span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main class="tracking-main">
+  <div class="tracking-heading">
+    <span class="section-label">CUSTOMER ORDER TRACKING</span>
+    <h1>Know where your <span>order stands.</span></h1>
+    <p>Enter the order number or payment request number and the mobile number used when submitting the order. Your details are checked securely.</p>
+  </div>
+
+  <form class="tracking-card" id="trackingForm">
+    <label for="reference">Order number / Payment request number</label>
+    <input id="reference" name="reference" type="text" placeholder="Example: GKX-20261110-000002 or PAY-..." minlength="6" maxlength="40" autocomplete="off" required>
+    <p class="tracking-help">You can use your GKX order number after approval, or your PAY request number while payment is being verified.</p>
+    <label for="phone">Registered mobile number</label>
+    <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number" minlength="10" maxlength="10" pattern="[6-9][0-9]{9}" required>
+    <button class="tracking-submit" id="trackingButton" type="submit">Track my order</button>
+    <p class="tracking-message" id="trackingMessage" role="status" aria-live="polite"></p>
+  </form>
+
+  <section class="tracking-result" id="trackingResult" aria-live="polite">
+    <div class="tracking-result-top">
+      <span class="tracking-reference" id="resultReference"></span>
+      <span class="tracking-status" id="resultStatus"></span>
+    </div>
+    <h2 id="resultTitle">Order update</h2>
+    <p id="resultMessage"></p>
+    <div class="tracking-meta" id="trackingMeta"></div>
+    <ol class="tracking-timeline" id="trackingTimeline">
+      <li data-stage="ORDER_RECEIVED">Order received</li>
+      <li data-stage="PROCESSING">Printing in progress</li>
+      <li data-stage="READY_FOR_COLLECTION">Ready for collection</li>
+      <li data-stage="COMPLETED">Completed</li>
+    </ol>
+  </section>
+
+  <p class="tracking-contact">Need help? Call <a href="tel:+917745062299">+91 77450 62299</a> or visit Gurukrupa Xerox, Plot No. 48, Balaji Nagar, New Bhokardan, Bhokardan.</p>
+</main>
+
+<script src="script.js" defer></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://fnsueklwnlndbismlwda.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_YeQac-5UJ8yjNb1xzyU7BA_luVBWfZ7";
+  const form = document.getElementById("trackingForm");
+  const button = document.getElementById("trackingButton");
+  const message = document.getElementById("trackingMessage");
+  const result = document.getElementById("trackingResult");
+  const money = value => "₹" + Number(value || 0).toLocaleString("en-IN");
+  const dateText = value => value ? new Date(value).toLocaleString("en-IN", {dateStyle:"medium",timeStyle:"short"}) : "—";
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  function render(data) {
+    document.getElementById("resultReference").textContent = data.reference || "";
+    document.getElementById("resultStatus").textContent = data.status_label || "Order update";
+    document.getElementById("resultTitle").textContent = data.type === "request" ? "Payment request update" : "Your print order";
+    document.getElementById("resultMessage").textContent = data.message || "";
+    const meta = [];
+    if (data.created_at) meta.push(["Submitted", dateText(data.created_at)]);
+    if (data.estimated_total != null) meta.push(["Estimated total", money(data.estimated_total)]);
+    if (data.pages_per_copy != null) meta.push(["Pages per copy", data.pages_per_copy]);
+    if (data.copies != null) meta.push(["Copies", data.copies]);
+    if (data.collection) meta.push(["Collection", data.collection]);
+    document.getElementById("trackingMeta").innerHTML = meta.map(([label,value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
+
+    const stages = ["ORDER_RECEIVED","PROCESSING","READY_FOR_COLLECTION","COMPLETED"];
+    const currentIndex = stages.indexOf(data.status);
+    document.querySelectorAll("#trackingTimeline [data-stage]").forEach(item => {
+      item.classList.toggle("done", currentIndex >= 0 && stages.indexOf(item.dataset.stage) <= currentIndex);
+    });
+    const timeline = document.getElementById("trackingTimeline");
+    timeline.style.display = data.type === "request" || data.status === "CANCELLED" ? "none" : "grid";
+    if (data.status === "CANCELLED") {
+      document.getElementById("resultStatus").style.background = "#fff0ed";
+      document.getElementById("resultStatus").style.color = "#a12b20";
+    } else {
+      document.getElementById("resultStatus").style.background = "#edf4ef";
+      document.getElementById("resultStatus").style.color = "#17633c";
+    }
+    result.classList.add("visible");
+    result.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    message.textContent = "";
+    result.classList.remove("visible");
+    button.disabled = true;
+    button.textContent = "Checking…";
+    try {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/track-print-order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_PUBLISHABLE_KEY
+        },
+        body: JSON.stringify({
+          reference: document.getElementById("reference").value.trim(),
+          phone: document.getElementById("phone").value.replace(/\D/g,"")
+        })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) throw new Error(data.error || "Could not find this order.");
+      render(data);
+    } catch (error) {
+      message.textContent = error.message || "Tracking is temporarily unavailable. Please try again.";
+    } finally {
+      button.disabled = false;
+      button.textContent = "Track my order";
+    }
+  });
+})();
+</script>
+</body>
+</html>
