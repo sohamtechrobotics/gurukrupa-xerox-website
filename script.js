@@ -553,7 +553,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const t = homeTranslations[language] || homeTranslations.en;
 
     saveLanguage(language);
-    translateWorkflowPage(language);
 
     setList("#navLinks a", t.nav);
     const navPrintItem = $('#navLinks a[href="print-online.html"]');
@@ -908,10 +907,10 @@ document.addEventListener("DOMContentLoaded", () => {
         [".upload-heading h2", "तुमची कागदपत्रे निवडा."],
         [".upload-panel h3", "निवडलेली कागदपत्रे"],
         [".preview-placeholder strong", "पूर्वदृश्य येथे दिसेल"],
-        [".settings-heading h2", "प्रिंटिंगचे पर्याय निवडा."],
-        [".review-heading h2", "ऑर्डर तपासून पुढे जा."],
-        [".customer-details h3", "आम्ही कोणाशी संपर्क साधावा?"],
-        [".how-section h2", "प्रिंटिंगची प्रक्रिया सोपी." ]
+        [".print-settings-heading h2", "प्रिंटिंगचे पर्याय निवडा."],
+        [".order-review-heading h2", "ऑर्डर तपासून पुढे जा."],
+        [".customer-details-card h3", "आम्ही कोणाशी संपर्क साधावा?"],
+        [".how-it-works-heading h2", "प्रिंटिंगची प्रक्रिया सोपी." ]
       ];
       headings.forEach(([s,v]) => text(s,v));
 
@@ -920,8 +919,16 @@ document.addEventListener("DOMContentLoaded", () => {
         ["#dropzone span:not(.upload-icon)","येथे क्लिक करा किंवा फाइल्स ड्रॅग करून सोडा"],
         ["#dropzone small","PDF, JPG आणि PNG · प्रत्येक फाइल कमाल १५ MB"],
         ["#clearFiles","सर्व फाइल्स काढून टाका"],
-        [".file-list-empty strong","अद्याप कोणतीही कागदपत्रे जोडलेली नाहीत"],
-        [".file-list-empty p","तुम्ही निवडलेल्या फाइल्स येथे दिसतील."],
+        ["#emptyState strong","अद्याप कोणतीही कागदपत्रे जोडलेली नाहीत"],
+        ["#emptyState p","तुम्ही निवडलेल्या फाइल्स येथे दिसतील."],
+        [".upload-list-header h3","निवडलेली कागदपत्रे"],
+        [".preview-footer > strong","कोणतेही कागदपत्र निवडलेले नाही"],
+        [".preview-footer > span","PDF फाइल्ससाठी पूर्वदृश्य उपलब्ध आहे."],
+        [".print-settings-heading > p","तुमच्या प्रिंटसाठी योग्य पर्याय निवडा."],
+        [".order-review-section .review-block-heading h3","निवडलेली कागदपत्रे"],
+        [".customer-details-card h3","आम्ही कोणाशी संपर्क साधावा?"],
+        [".phonepe-payment-card h4","अचूक रक्कम भरा"],
+        [".order-form-message",""],
         [".preview-indicator","स्थानिक पूर्वदृश्य"],
         [".preview-placeholder strong","पूर्वदृश्य येथे दिसेल"],
         [".preview-placeholder p","पाहण्यासाठी PDF कागदपत्र निवडा."],
@@ -941,7 +948,7 @@ document.addEventListener("DOMContentLoaded", () => {
         [".estimate-disclaimer","अंदाजे किंमत दुकानाच्या A4 प्रत्यक्ष शीटच्या दरांनुसार आहे. प्रिंटिंगचे पर्याय तुमच्या विनंतीसोबत नोंदवले जातील. अंतिम प्रिंटिंग मांडणी दुकानात केली जाईल."],
         [".review-documents h3","निवडलेली कागदपत्रे"],
         [".review-preferences h3","प्रिंटिंगचे पर्याय"],
-        [".customer-section .section-label","ग्राहकाची माहिती"],
+        [".customer-details-card .section-label","ग्राहकाची माहिती"],
         ["label[for='customerName']","तुमचे नाव"],
         ["label[for='customerPhone']","मोबाईल क्रमांक"],
         [".customer-help","ऑर्डरची खात्री करण्यासाठी आवश्यक असल्यास आम्ही तुमच्याशी संपर्क साधू."],
@@ -962,6 +969,11 @@ document.addEventListener("DOMContentLoaded", () => {
       options("#pagesPerSheet", ["एका शीटवर १ पान","एका शीटवर २ पाने","एका शीटवर ४ पाने","एका शीटवर ६ पाने","एका शीटवर ९ पाने","एका शीटवर १६ पाने"]);
       options("#duplexMode", ["एकाच बाजूने","दोन्ही बाजूंनी — लांब बाजूने उलट","दोन्ही बाजूंनी — छोट्या बाजूने उलट"]);
       options("#orientation", ["आपोआप (कागदपत्रानुसार)","उभे","आडवे"]);
+      text(".print-settings-card > h3", "अंदाजे किंमत");
+      text("#reviewDocumentList .review-empty", "अद्याप कागदपत्रे निवडलेली नाहीत. पहिल्या टप्प्यात कागदपत्रे जोडा.");
+      text(".how-section h3:nth-of-type(1)", "अपलोड करा");
+      const pageCountHelp = document.querySelector("#pageCountHelp");
+      if (pageCountHelp) pageCountHelp.textContent = "निवडलेल्या PDF आणि प्रतिमांमधून पानांची संख्या मोजली जाते.";
 
       // Translate fixed labels while leaving calculated numbers and rupee amounts intact.
       const labelMap = {
@@ -1011,6 +1023,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (phone) phone.placeholder = "१० अंकी मोबाईल क्रमांक";
       const message = document.querySelector("#trackingMessage");
       if (message && message.textContent === "Checking…") message.textContent = "तपासत आहे…";
+      const submit = document.querySelector("#trackingButton");
+      if (submit && !submit.disabled) submit.textContent = "माझी ऑर्डर पाहा";
       const status = document.querySelector("#resultStatus");
       if (status) {
         const statuses = {
@@ -1042,6 +1056,15 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       translateInner(language);
     }
+
+    // Workflow-page translations must run after the shared inner-page
+    // translation so the shared navigation/footer cannot overwrite them.
+    const page = location.pathname.split("/").pop() || "index.html";
+    if (["print-online.html", "track-order.html"].includes(page)) {
+      if (language === "mr") {
+        translateWorkflowPage(language);
+      }
+    }
   }
 
   const initialLanguage = getSavedLanguage();
@@ -1049,7 +1072,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (languageSelect) {
     languageSelect.addEventListener("change", event => {
-      applyLanguage(event.target.value);
+      const language = event.target.value;
+      const page = location.pathname.split("/").pop() || "index.html";
+      if (["print-online.html", "track-order.html"].includes(page) && language !== "mr") {
+        // These workflow pages use English as their source markup. Reloading
+        // restores every original label, placeholder and option when leaving Marathi.
+        saveLanguage(language);
+        location.reload();
+        return;
+      }
+      applyLanguage(language);
     });
   }
 
