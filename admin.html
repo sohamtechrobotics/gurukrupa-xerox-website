@@ -25,6 +25,7 @@
     .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.filters input{max-width:310px}.filters select{max-width:230px}
     .orders{display:grid;gap:12px}.order{background:linear-gradient(145deg,#142239ed,#101b2ded);border:1px solid #2d405a;border-radius:16px;padding:18px;transition:border-color .2s,transform .2s}.order:hover{border-color:#8b744b;transform:translateY(-1px)}.order-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.order-id{font-weight:850;color:var(--gold2);font-size:16px}.muted{color:var(--muted);font-size:12px}.details{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:16px 0}.detail span{display:block;color:#8495ac;font-size:10px;text-transform:uppercase;letter-spacing:.09em}.detail strong{display:block;font-size:13px;margin-top:4px;overflow-wrap:anywhere}
     .order-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid #ffffff12;padding-top:13px}.status{max-width:245px;padding:8px 10px}.status-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tag{font-size:11px;border:1px solid #3b4d65;border-radius:99px;padding:5px 9px;color:#c1ccda;background:#ffffff06}
+    .file-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.file-link{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #425873;border-radius:10px;background:#0b1728;color:#e8d7ad;text-decoration:none;font-size:12px}.file-link:hover{border-color:var(--gold);background:#1b2b43}.file-note{color:var(--muted);font-size:11px;margin-top:8px}
     .empty{text-align:center;padding:42px 15px;color:var(--muted)}.foot{color:#71819a;font-size:11px;text-align:center;margin-top:28px}
     @media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}.overview-grid{grid-template-columns:1fr}.details{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.wrap{width:calc(100% - 22px);padding-top:16px}.panel{padding:19px}.toolbar h2{font-size:24px}.toolbar{align-items:flex-start}.toolbar-actions{width:100%;justify-content:space-between}.stats{gap:9px}.stat{padding:14px;min-height:119px}.stat strong{font-size:25px}.details{gap:11px}.orders-heading{align-items:flex-start;flex-direction:column}.filters input,.filters select{max-width:none;flex:1 1 100%}}
@@ -206,6 +207,9 @@
           <div class="detail"><span>Files recorded</span><strong>${files}</strong></div>
           <div class="detail"><span>Payment</span><strong>${safe(o.payment_status || 'Not set')}</strong></div>
         </div>
+        <div class="file-list">
+          <button class="btn secondary small" data-order-files="${safe(o.id)}">View / Download documents (${files})</button>
+        </div>
         <div class="order-bottom">
           <span class="muted">Collection: ${safe(o.collection_method || 'Shop collection')}</span>
           <div class="status-actions">
@@ -220,6 +224,48 @@
     document.querySelectorAll('[data-save-status]').forEach(btn => {
       btn.addEventListener('click', () => updateStatus(btn.dataset.saveStatus, document.querySelector(`[data-status-for="${CSS.escape(btn.dataset.saveStatus)}"]`).value, btn));
     });
+    document.querySelectorAll('[data-order-files]').forEach(btn => {
+      btn.addEventListener('click', () => openOrderFiles(btn.dataset.orderFiles, btn));
+    });
+  }
+
+  async function openOrderFiles(orderId, button) {
+    const order = orders.find(item => item.id === orderId);
+    if (!order) { alert('Order not found. Refresh the dashboard.'); return; }
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Preparing secure links…';
+    try {
+      const { data, error } = await client.functions.invoke('get-order-documents', {
+        body: { order_id: orderId }
+      });
+      if (error) throw error;
+      if (!data?.success || !Array.isArray(data.files)) {
+        throw new Error(data?.error || 'Could not retrieve document links.');
+      }
+      const card = button.closest('.order');
+      let list = card.querySelector('.generated-file-list');
+      if (!list) {
+        list = document.createElement('div');
+        list.className = 'generated-file-list file-list';
+        button.parentElement.insertAdjacentElement('afterend', list);
+      }
+      if (!data.files.length) {
+        list.innerHTML = '<span class="file-note">No downloadable files were found for this order.</span>';
+      } else {
+        list.innerHTML = data.files.map((file, index) => {
+          const name = safe(file.name || `Document ${index + 1}`);
+          const url = safe(file.url || '');
+          return `<a class="file-link" href="${url}" target="_blank" rel="noopener noreferrer">↗ ${name}</a>`;
+        }).join('');
+      }
+    } catch (error) {
+      console.error('Document retrieval failed:', error);
+      alert('Could not prepare document links: ' + (error.message || 'Unknown error'));
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }
 
   function renderPaymentRequests() {
