@@ -648,6 +648,27 @@
 
       const money = value => "₹" + Number(value).toLocaleString("en-IN");
 
+      // Convert Supabase/API errors into readable text instead of [object Object].
+      function readableError(value, fallback = "Something went wrong. Please try again.") {
+        if (typeof value === "string" && value.trim()) return value.trim();
+        if (value instanceof Error && value.message) return value.message;
+        if (value && typeof value === "object") {
+          const candidates = [value.message, value.error_description, value.error, value.details, value.hint];
+          for (const candidate of candidates) {
+            if (typeof candidate === "string" && candidate.trim()) return candidate.trim();
+            if (candidate && typeof candidate === "object") {
+              const nested = candidate.message || candidate.details || candidate.hint;
+              if (typeof nested === "string" && nested.trim()) return nested.trim();
+            }
+          }
+          try {
+            const json = JSON.stringify(value);
+            if (json && json !== "{}") return json;
+          } catch (_) {}
+        }
+        return fallback;
+      }
+
       function getOrderNumbers() {
         const pages = Math.max(0, parseInt(pagesInput?.value, 10) || 0);
         const copies = Math.max(1, parseInt(copiesInput?.value, 10) || 1);
@@ -748,7 +769,7 @@
 
           const result = await response.json().catch(() => ({}));
           if (!response.ok || !result.success) {
-            throw new Error(result.error || "Your order could not be submitted. Please try again.");
+            throw new Error(readableError(result.error ?? result, `Your order could not be submitted (HTTP ${response.status}). Please try again.`));
           }
 
           message.textContent = `Payment request submitted! Reference ID: ${result.requestId}. Amount: ${money(result.estimatedTotal)}. Your request is pending manual payment verification. It is not yet an accepted print order.`;
@@ -757,7 +778,7 @@
           form.reset();
           document.getElementById("clearFiles").click();
         } catch (error) {
-          message.textContent = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+          message.textContent = readableError(error, "Your order could not be submitted. Please try again.");
           message.className = "order-form-message error";
           submitButton.disabled = false;
           submitButton.innerHTML = 'Submit for payment verification <span>↗</span>';
