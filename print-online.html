@@ -295,7 +295,18 @@
           </div>
           <div class="setting-group">
             <label for="customerPhone">Mobile number</label>
-            <input type="tel" id="customerPhone" name="customerPhone" placeholder="10-digit mobile number" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" required>
+            <input
+  type="tel"
+  name="mobile"
+  id="mobile"
+  placeholder="Enter 10-digit mobile number"
+  inputmode="numeric"
+  pattern="[6-9][0-9]{9}"
+  minlength="10"
+  maxlength="10"
+  autocomplete="tel"
+  required
+>
             <small>We may contact you if we need to confirm your order.</small>
           </div>
 
