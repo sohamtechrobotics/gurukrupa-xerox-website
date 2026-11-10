@@ -2538,3 +2538,218 @@ html[data-theme="dark"] .footer a,html[data-theme="dark"] .footer p { color:#b8c
 .gallery-real-grid .gallery-item figcaption strong { font:800 19px "Manrope",sans-serif;color:white; }
 .gallery-real-grid .gallery-item figcaption small { color:#d4deea;font-size:11px; }
 @media(max-width:700px){.hero{padding-top:36px}main>.section:first-child{padding-top:42px}.section{padding-top:58px;padding-bottom:58px}.theme-toggle{width:38px;height:38px}.gallery-real-grid{grid-template-columns:1fr}.gallery-real-grid .gallery-item,.gallery-real-grid .gallery-item.gallery-large{min-height:260px}}
+
+
+/* ===== FIXED SITE-WIDE DARK THEME ===== */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --white: #0c1b2d;
+  --off-white: #0a1726;
+  --text: #edf3fb;
+  --muted: #b1bfd0;
+  --border: #2a4058;
+  --blue-light: #142b43;
+  --shadow: 0 18px 55px rgba(0,0,0,.30);
+}
+html[data-theme="dark"] body {
+  background: #081321 !important;
+  color: #edf3fb !important;
+}
+html[data-theme="dark"] main,
+html[data-theme="dark"] section,
+html[data-theme="dark"] .hero,
+html[data-theme="dark"] .quick-info,
+html[data-theme="dark"] .print-section,
+html[data-theme="dark"] .services-section,
+html[data-theme="dark"] .why-section,
+html[data-theme="dark"] .contact-section,
+html[data-theme="dark"] .gallery-section,
+html[data-theme="dark"] .tracking-main,
+html[data-theme="dark"] .upload-section,
+html[data-theme="dark"] .print-settings-section,
+html[data-theme="dark"] .order-review-section {
+  color: #edf3fb;
+}
+html[data-theme="dark"] .navbar {
+  background: rgba(9, 24, 41, .97) !important;
+  border-color: #34485f !important;
+}
+html[data-theme="dark"] .nav-links a,
+html[data-theme="dark"] .brand-text strong,
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] label,
+html[data-theme="dark"] .section-heading,
+html[data-theme="dark"] .section-heading p,
+html[data-theme="dark"] p,
+html[data-theme="dark"] li,
+html[data-theme="dark"] .brand-text span {
+  color: inherit;
+}
+html[data-theme="dark"] .service-card,
+html[data-theme="dark"] .why-card,
+html[data-theme="dark"] .contact-card,
+html[data-theme="dark"] .contact-info-card,
+html[data-theme="dark"] .form-card,
+html[data-theme="dark"] .tracking-card,
+html[data-theme="dark"] .order-card,
+html[data-theme="dark"] .upload-card,
+html[data-theme="dark"] .phonepe-payment-card,
+html[data-theme="dark"] .print-setting-card,
+html[data-theme="dark"] .order-review-card,
+html[data-theme="dark"] .gallery-item,
+html[data-theme="dark"] .quick-info-card,
+html[data-theme="dark"] .info-card,
+html[data-theme="dark"] .service-box,
+html[data-theme="dark"] .faq-item {
+  background: #102238 !important;
+  color: #edf3fb !important;
+  border-color: #2a4058 !important;
+}
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+  background: #0a192a !important;
+  color: #edf3fb !important;
+  border-color: #3a5069 !important;
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #9aabc0 !important;
+}
+html[data-theme="dark"] table,
+html[data-theme="dark"] th,
+html[data-theme="dark"] td {
+  background-color: #102238;
+  color: #edf3fb;
+  border-color: #2a4058;
+}
+html[data-theme="dark"] .footer {
+  background: #050d18 !important;
+  color: #edf3fb !important;
+}
+html[data-theme="dark"] .footer a,
+html[data-theme="dark"] .footer p,
+html[data-theme="dark"] .footer strong {
+  color: #c4d0df !important;
+}
+html[data-theme="dark"] .theme-toggle {
+  background: #172d45 !important;
+  color: #f3d99f !important;
+  border-color: #52647a !important;
+}
+.theme-toggle { cursor: pointer; }
+
+
+/* ===== FINAL DARK MODE: all public page components ===== */
+html[data-theme="dark"] body,
+html[data-theme="dark"] main {
+  background: #081321 !important;
+  color: #eaf0f8 !important;
+}
+html[data-theme="dark"] .navbar,
+html[data-theme="dark"] .nav-links,
+html[data-theme="dark"] .nav-actions {
+  background-color: #0b1b2d !important;
+}
+html[data-theme="dark"] .hero,
+html[data-theme="dark"] .quick-info,
+html[data-theme="dark"] .print-section:not(.phonepe-payment-card),
+html[data-theme="dark"] .why-section,
+html[data-theme="dark"] .enquiry-section,
+html[data-theme="dark"] .map-section,
+html[data-theme="dark"] .services-section,
+html[data-theme="dark"] .about-section,
+html[data-theme="dark"] .contact-section,
+html[data-theme="dark"] .gallery-section,
+html[data-theme="dark"] .tracking-main,
+html[data-theme="dark"] .upload-section,
+html[data-theme="dark"] .print-settings-section,
+html[data-theme="dark"] .order-review-section,
+html[data-theme="dark"] .section {
+  background-color: #081321 !important;
+  color: #eaf0f8 !important;
+}
+html[data-theme="dark"] .print-section {
+  background-image: linear-gradient(125deg,#071a33,#102b4c) !important;
+}
+html[data-theme="dark"] .tracking-heading h1,
+html[data-theme="dark"] .tracking-heading p,
+html[data-theme="dark"] .upload-heading h2,
+html[data-theme="dark"] .upload-heading p,
+html[data-theme="dark"] .section-heading h2,
+html[data-theme="dark"] .section-heading p,
+html[data-theme="dark"] .print-content h2,
+html[data-theme="dark"] .print-content p,
+html[data-theme="dark"] .print-content li,
+html[data-theme="dark"] .hero-description,
+html[data-theme="dark"] .hero h1,
+html[data-theme="dark"] .hero p {
+  color: #eaf0f8 !important;
+}
+html[data-theme="dark"] .tracking-card,
+html[data-theme="dark"] .upload-dropzone,
+html[data-theme="dark"] .upload-file-item,
+html[data-theme="dark"] .print-setting-card,
+html[data-theme="dark"] .order-review-card,
+html[data-theme="dark"] .phonepe-payment-card,
+html[data-theme="dark"] .tracking-result,
+html[data-theme="dark"] .service-card,
+html[data-theme="dark"] .why-card,
+html[data-theme="dark"] .contact-card,
+html[data-theme="dark"] .contact-info-card,
+html[data-theme="dark"] .form-card,
+html[data-theme="dark"] .gallery-item,
+html[data-theme="dark"] .quick-info-card,
+html[data-theme="dark"] .faq-item {
+  background: #102238 !important;
+  color: #eaf0f8 !important;
+  border-color: #30465f !important;
+}
+html[data-theme="dark"] .tracking-card label,
+html[data-theme="dark"] .upload-dropzone strong,
+html[data-theme="dark"] .upload-file-item,
+html[data-theme="dark"] .print-setting-card label,
+html[data-theme="dark"] .order-review-card,
+html[data-theme="dark"] .service-card h3,
+html[data-theme="dark"] .why-card h3 {
+  color: #eaf0f8 !important;
+}
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+  background: #091a2b !important;
+  color: #f4f7fb !important;
+  border: 1px solid #425a74 !important;
+}
+html[data-theme="dark"] .footer {
+  background: #050d18 !important;
+  color: #eaf0f8 !important;
+}
+html[data-theme="dark"] .footer * { color: #c5d1df; }
+html[data-theme="dark"] .theme-toggle {
+  display: inline-grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  z-index: 1002 !important;
+  position: relative !important;
+}
+
+/* ===== ACTUALLY REDUCE THE GAP AFTER THE HEADER ===== */
+.hero { padding-top: 48px !important; }
+.print-section { padding-top: 42px !important; }
+.tracking-main { padding-top: 28px !important; }
+main > .section:first-child,
+main > section:first-child:not(.hero):not(.print-section) {
+  padding-top: 42px !important;
+}
+.upload-section { padding-top: 58px !important; }
+@media (max-width: 700px) {
+  .hero { padding-top: 32px !important; }
+  .print-section { padding-top: 30px !important; }
+  .tracking-main { padding-top: 24px !important; }
+  .upload-section { padding-top: 38px !important; }
+}
