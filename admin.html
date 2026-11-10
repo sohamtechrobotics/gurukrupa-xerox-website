@@ -75,10 +75,12 @@
             <div class="quick-row"><span>Payment pending</span><strong id="paymentPending">₹0</strong></div>
             <div class="quick-row"><span>Total orders loaded</span><strong id="totalCount">0</strong></div>
           </div>
-          <div class="quick-note">Sales figures are estimates from submitted orders. Payment tracking will be connected when the payment gateway is integrated.</div>
+          <div class="quick-note">Payment requests are shown separately above. Verify each UTR in PhonePe Business before accepting an order. A customer-entered UTR is not proof of payment.</div>
         </section>
       </div>
-      <div class="orders-heading"><div><h3>Print orders</h3><p>Review customer requests and update their progress.</p></div><span class="tag">Latest 200 orders</span></div>
+      <div class="orders-heading" style="margin-top:30px"><div><h3>Payment verification queue</h3><p>New customer submissions appear here before they become accepted print orders.</p></div><span class="tag" id="requestCount">0 pending</span></div>
+      <div class="orders" id="paymentRequestsList"><div class="panel empty">Loading payment requests…</div></div>
+      <div class="orders-heading" style="margin-top:30px"><div><h3>Accepted print orders</h3><p>Only verified and approved orders should appear in this printing workflow.</p></div><span class="tag">Latest 200 orders</span></div>
       <div class="filters">
         <input id="searchBox" type="search" placeholder="Search order, customer or phone">
         <select id="statusFilter">
@@ -109,6 +111,7 @@
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
   const $ = id => document.getElementById(id);
   let orders = [];
+  let paymentRequests = [];
   let channel = null;
   let previousIds = new Set();
 
@@ -150,7 +153,10 @@
     $('processingCount').textContent = processing;
     $('readyCount').textContent = ready;
     $('completedCount').textContent = completed;
-    $('paymentPending').textContent = money(pendingAmount);
+    const requestPendingAmount = paymentRequests
+      .filter(r => String(r.request_status || '').toUpperCase() === 'PENDING_VERIFICATION')
+      .reduce((sum,r) => sum + Number(r.estimated_total || 0),0);
+    $('paymentPending').textContent = money(pendingAmount + requestPendingAmount);
     $('totalCount').textContent = orders.length;
     renderOrdersChart();
   }
@@ -215,6 +221,47 @@
       btn.addEventListener('click', () => updateStatus(btn.dataset.saveStatus, document.querySelector(`[data-status-for="${CSS.escape(btn.dataset.saveStatus)}"]`).value, btn));
     });
   }
+
+  function renderPaymentRequests() {
+    const pending = paymentRequests.filter(r => String(r.request_status || '').toUpperCase() === 'PENDING_VERIFICATION');
+    $('requestCount').textContent = `${pending.length} pending`;
+    if (!pending.length) {
+      $('paymentRequestsList').innerHTML = '<div class="panel empty">No payment requests are waiting for verification.</div>';
+      renderStats();
+      return;
+    }
+    $('paymentRequestsList').innerHTML = pending.map(r => {
+      const files = Array.isArray(r.file_manifest) ? r.file_manifest.length : 0;
+      return `<article class="order">
+        <div class="order-top">
+          <div><div class="order-id">${safe(r.request_number || 'Payment request')}</div><div class="muted">${dateText(r.created_at)}</div></div>
+          <span class="tag">Pending manual verification</span>
+        </div>
+        <div class="details">
+          <div class="detail"><span>Customer</span><strong>${safe(r.customer_name)}</strong></div>
+          <div class="detail"><span>Phone</span><strong><a style="color:var(--text)" href="tel:${safe(r.customer_phone)}">${safe(r.customer_phone)}</a></strong></div>
+          <div class="detail"><span>UPI reference / UTR</span><strong>${safe(r.utr_reference || 'Not provided')}</strong></div>
+          <div class="detail"><span>Amount to verify</span><strong>${money(r.estimated_total)}</strong></div>
+          <div class="detail"><span>Print settings</span><strong>A4 · ${r.print_mode === 'bw' ? 'B&W' : 'Colour'} · ${r.print_sides === 'double' ? 'Double' : 'Single'} side</strong></div>
+          <div class="detail"><span>Pages / Copies</span><strong>${safe(r.pages_per_copy)} pages · ${safe(r.copies)} copies</strong></div>
+          <div class="detail"><span>Total sheets</span><strong>${safe(r.total_sheets)}</strong></div>
+          <div class="detail"><span>Documents</span><strong>${files} file(s) uploaded privately</strong></div>
+        </div>
+        <div class="order-bottom">
+          <span class="muted">Do not accept for printing until the exact amount and UTR are confirmed as credited in PhonePe Business.</span>
+          <span class="tag">${safe(r.payment_status || 'PENDING')}</span>
+        </div>
+      </article>`;
+    }).join('');
+    renderStats();
+  }
+  async function loadPaymentRequests() {
+    const {data,error} = await client.from('print_order_requests').select('*').order('created_at',{ascending:false}).limit(200);
+    if (error) throw error;
+    paymentRequests = data || [];
+    renderPaymentRequests();
+  }
+
   async function loadOrders() {
     const {data,error} = await client.from('print_orders').select('*').order('created_at',{ascending:false}).limit(200);
     if (error) throw error;
@@ -240,6 +287,21 @@
   function subscribeRealtime() {
     if (channel) client.removeChannel(channel);
     channel = client.channel('admin-print-orders')
+      .on('postgres_changes',{event:'*',schema:'public',table:'print_order_requests'},payload => {
+        if (payload.eventType === 'INSERT') {
+          paymentRequests = [payload.new, ...paymentRequests.filter(r => r.id !== payload.new.id)];
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('New payment verification request', {body:`${payload.new.request_number || ''} · ${payload.new.customer_name || 'Customer'} · ${money(payload.new.estimated_total)}`});
+          }
+        } else if (payload.eventType === 'UPDATE') {
+          const index = paymentRequests.findIndex(r => r.id === payload.new.id);
+          if (index >= 0) paymentRequests[index] = payload.new;
+          else paymentRequests.unshift(payload.new);
+        } else if (payload.eventType === 'DELETE') {
+          paymentRequests = paymentRequests.filter(r => r.id !== payload.old.id);
+        }
+        renderPaymentRequests();
+      })
       .on('postgres_changes',{event:'*',schema:'public',table:'print_orders'},payload => {
         if (payload.eventType === 'INSERT') {
           const row = payload.new;
@@ -271,7 +333,7 @@
     $('dashboard').classList.remove('hidden');
     setConnection('Connecting…');
     try {
-      await loadOrders();
+      await Promise.all([loadOrders(), loadPaymentRequests()]);
       subscribeRealtime();
       if ('Notification' in window && Notification.permission === 'default') {
         // Permission is requested only after the admin explicitly signs in.
@@ -298,6 +360,7 @@
     if (channel) await client.removeChannel(channel);
     await client.auth.signOut();
     orders = [];
+    paymentRequests = [];
     $('dashboard').classList.add('hidden');
     $('loginPanel').classList.remove('hidden');
     $('password').value = '';
@@ -317,4 +380,3 @@
 </script>
 </body>
 </html>
-
