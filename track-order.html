@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" href="assets/gurukrupa-favicon.png">
-  <link rel="apple-touch-icon" href="assets/gurukrupa-favicon.png">
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#071a33">
@@ -51,13 +47,10 @@
 </head>
 <body>
 <header class="navbar">
-  <a href="index.html" class="brand" aria-label="Gurukrupa Xerox and Soham Multiservices home">
-  <div class="brand-logo">GX</div>
-  <div class="brand-text">
-    <strong>GURUKRUPA XEROX</strong>
-    <span>& SOHAM MULTISERVICES</span>
-  </div>
-</a>
+  <a href="index.html" class="brand">
+    <span class="brand-logo">G</span>
+    <span class="brand-text"><strong>GURUKRUPA XEROX</strong><span>& SOHAM MULTISERVICES</span></span>
+  </a>
   <nav class="nav-links" id="navLinks">
     <a href="index.html">Home</a><a href="services.html">Services</a>
     <a href="about.html">About</a><a href="gallery.html">Gallery</a>
@@ -106,7 +99,7 @@
   <p class="tracking-contact">Need help? Call <a href="tel:+917745062299">+91 77450 62299</a> or visit Gurukrupa Xerox, Plot No. 48, Balaji Nagar, New Bhokardan, Bhokardan.</p>
 </main>
 
-<script src="script.js" defer></script>
+<script src="script.js?v=language-switcher-print-track-20261110" defer></script>
 <script>
 (() => {
   const SUPABASE_URL = "https://fnsueklwnlndbismlwda.supabase.co";
@@ -121,15 +114,27 @@
 
   function render(data) {
     document.getElementById("resultReference").textContent = data.reference || "";
-    document.getElementById("resultStatus").textContent = data.status_label || "Order update";
-    document.getElementById("resultTitle").textContent = data.type === "request" ? "Payment request update" : "Your print order";
-    document.getElementById("resultMessage").textContent = data.message || "";
+    const mr = document.documentElement.lang === "mr";
+    const statusMr = {
+      ORDER_RECEIVED: "ऑर्डर प्राप्त झाली", PROCESSING: "प्रिंटिंग सुरू आहे",
+      READY_FOR_COLLECTION: "प्रिंट तयार आहे — घेऊन जा", COMPLETED: "ऑर्डर पूर्ण झाली",
+      CANCELLED: "ऑर्डर रद्द झाली", PENDING_VERIFICATION: "पेमेंट पडताळणी प्रलंबित",
+      APPROVED: "पेमेंट मंजूर झाले", REJECTED: "पेमेंट विनंती नाकारली"
+    };
+    document.getElementById("resultStatus").textContent = mr ? (statusMr[data.status] || "ऑर्डरची माहिती") : (data.status_label || "Order update");
+    document.getElementById("resultTitle").textContent = mr ? (data.type === "request" ? "पेमेंट विनंतीची माहिती" : "तुमची प्रिंट ऑर्डर") : (data.type === "request" ? "Payment request update" : "Your print order");
+    const messageMr = {
+      "Your payment request is awaiting manual verification.": "तुमची पेमेंट विनंती दुकानाकडून तपासली जात आहे.",
+      "Payment verified. Your print order has been accepted.": "पेमेंटची पडताळणी झाली आहे. तुमची प्रिंट ऑर्डर स्वीकारली आहे.",
+      "Your payment request was rejected. Please contact the shop.": "तुमची पेमेंट विनंती नाकारली आहे. कृपया दुकानाशी संपर्क साधा."
+    };
+    document.getElementById("resultMessage").textContent = mr ? (messageMr[data.message] || data.message || "") : (data.message || "");
     const meta = [];
-    if (data.created_at) meta.push(["Submitted", dateText(data.created_at)]);
-    if (data.estimated_total != null) meta.push(["Estimated total", money(data.estimated_total)]);
-    if (data.pages_per_copy != null) meta.push(["Pages per copy", data.pages_per_copy]);
-    if (data.copies != null) meta.push(["Copies", data.copies]);
-    if (data.collection) meta.push(["Collection", data.collection]);
+    if (data.created_at) meta.push([mr ? "ऑर्डर दिल्याची वेळ" : "Submitted", dateText(data.created_at)]);
+    if (data.estimated_total != null) meta.push([mr ? "अंदाजे एकूण रक्कम" : "Estimated total", money(data.estimated_total)]);
+    if (data.pages_per_copy != null) meta.push([mr ? "प्रति प्रती पाने" : "Pages per copy", data.pages_per_copy]);
+    if (data.copies != null) meta.push([mr ? "प्रतींची संख्या" : "Copies", data.copies]);
+    if (data.collection) meta.push([mr ? "प्रिंट घेण्याची माहिती" : "Collection", data.collection]);
     document.getElementById("trackingMeta").innerHTML = meta.map(([label,value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
 
     const stages = ["ORDER_RECEIVED","PROCESSING","READY_FOR_COLLECTION","COMPLETED"];
@@ -155,7 +160,7 @@
     message.textContent = "";
     result.classList.remove("visible");
     button.disabled = true;
-    button.textContent = "Checking…";
+    button.textContent = document.documentElement.lang === "mr" ? "तपासत आहे…" : "Checking…";
     try {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/track-print-order`, {
         method: "POST",
@@ -175,7 +180,7 @@
       message.textContent = error.message || "Tracking is temporarily unavailable. Please try again.";
     } finally {
       button.disabled = false;
-      button.textContent = "Track my order";
+      button.textContent = document.documentElement.lang === "mr" ? "माझी ऑर्डर पाहा" : "Track my order";
     }
   });
 })();
