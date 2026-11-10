@@ -213,7 +213,7 @@
         <div class="order-bottom">
           <span class="muted">Collection: ${safe(o.collection_method || 'Shop collection')}</span>
           <div class="status-actions">
-            ${o.status === 'CANCELLED' && String(o.payment_status || '').toUpperCase() !== 'PAID' ? `<button class="btn small" style="background:#7f3038;border-color:#a64c56;color:#fff" data-delete-cancelled="${safe(o.id)}" data-order-number="${safe(o.order_number || 'this order')}">Delete cancelled order</button>` : ''}
+            ${o.status === 'CANCELLED' ? `<button class="btn small" style="background:#7f3038;border-color:#a64c56;color:#fff" data-delete-cancelled="${safe(o.id)}" data-order-number="${safe(o.order_number || 'this order')}">Delete cancelled order</button>` : ''}
             <select class="status" data-status-for="${safe(o.id)}" aria-label="Update status for ${safe(o.order_number)}">
               ${Object.entries(STATUS_LABELS).map(([key,label]) => `<option value="${key}" ${o.status===key?'selected':''}>${label}</option>`).join('')}
             </select>
@@ -234,7 +234,18 @@
   }
 
   async function deleteCancelledOrder(orderId, orderNumber, button) {
-    const confirmed = window.confirm(`Permanently delete ${orderNumber}? This removes the cancelled order and its uploaded documents. This cannot be undone. Paid orders cannot be deleted.`);
+    const order = orders.find(item => item.id === orderId);
+    const isPaid = String(order?.payment_status || '').toUpperCase() === 'PAID';
+    const warning = isPaid
+      ? `
+
+WARNING: This order is marked PAID. Deleting it permanently removes its order record and uploaded documents. Make sure you have separately retained the PhonePe transaction/UTR and accounting record. This does NOT issue a refund.`
+      : `
+
+This permanently removes the cancelled order and its uploaded documents. This cannot be undone.`;
+    const confirmed = window.confirm(`Permanently delete ${orderNumber}?${warning}
+
+Continue?`);
     if (!confirmed) return;
     const originalText = button.textContent;
     button.disabled = true;
