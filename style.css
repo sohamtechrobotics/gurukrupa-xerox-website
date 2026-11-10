@@ -2753,3 +2753,47 @@ main > section:first-child:not(.hero):not(.print-section) {
   .tracking-main { padding-top: 24px !important; }
   .upload-section { padding-top: 38px !important; }
 }
+
+
+/* ===== DARK MODE CONTRAST PATCH: homepage CTAs + print note ===== */
+/* Keep homepage call-to-action labels readable against their buttons. */
+html[data-theme="dark"] .hero .btn-primary {
+  color: #071a33 !important;
+  background: #e7c987 !important;
+  border: 1px solid #e7c987 !important;
+  box-shadow: 0 9px 25px rgba(0, 0, 0, .22) !important;
+}
+html[data-theme="dark"] .hero .btn-primary span {
+  color: #071a33 !important;
+}
+html[data-theme="dark"] .hero .btn-primary:hover {
+  color: #071a33 !important;
+  background: #f0dba9 !important;
+  border-color: #f0dba9 !important;
+}
+html[data-theme="dark"] .hero .btn-secondary {
+  color: #f4f7fb !important;
+  background: #102238 !important;
+  border: 1px solid #536b86 !important;
+}
+html[data-theme="dark"] .hero .btn-secondary:hover {
+  color: #ffffff !important;
+  background: #183451 !important;
+  border-color: #d9b978 !important;
+}
+
+/* The upload note intentionally stays cream; its text must stay dark too. */
+html[data-theme="dark"] .upload-information {
+  background: #fdfaf4 !important;
+  border-color: #eadfc8 !important;
+}
+html[data-theme="dark"] .upload-information strong {
+  color: #071a33 !important;
+}
+html[data-theme="dark"] .upload-information p {
+  color: #526174 !important;
+}
+html[data-theme="dark"] .upload-information .info-icon {
+  color: #ffffff !important;
+  background: #071a33 !important;
+}
