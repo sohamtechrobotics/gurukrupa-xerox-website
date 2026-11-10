@@ -54,7 +54,7 @@
 
     <section id="dashboard" class="hidden">
       <div class="toolbar">
-        <div><div class="eyebrow">Shop control centre</div><h2>Good day, Admin</h2><p>Here’s what’s happening at Gurukrupa Xerox And Soham Multiservices today.</p></div>
+        <div><div class="eyebrow">Shop control centre</div><h2>Good day, Admin</h2><p>Here’s what’s happening at Gurukrupa Xerox today.</p></div>
         <div class="toolbar-actions"><span class="pill live" id="liveState">● Live updates on</span><button class="btn secondary small" id="logoutBtn">Sign out</button></div>
       </div>
       <div class="stats">
@@ -213,6 +213,7 @@
         <div class="order-bottom">
           <span class="muted">Collection: ${safe(o.collection_method || 'Shop collection')}</span>
           <div class="status-actions">
+            ${o.status === 'CANCELLED' && String(o.payment_status || '').toUpperCase() !== 'PAID' ? `<button class="btn small" style="background:#7f3038;border-color:#a64c56;color:#fff" data-delete-cancelled="${safe(o.id)}" data-order-number="${safe(o.order_number || 'this order')}">Delete cancelled order</button>` : ''}
             <select class="status" data-status-for="${safe(o.id)}" aria-label="Update status for ${safe(o.order_number)}">
               ${Object.entries(STATUS_LABELS).map(([key,label]) => `<option value="${key}" ${o.status===key?'selected':''}>${label}</option>`).join('')}
             </select>
@@ -227,6 +228,32 @@
     document.querySelectorAll('[data-order-files]').forEach(btn => {
       btn.addEventListener('click', () => openOrderFiles(btn.dataset.orderFiles, btn));
     });
+    document.querySelectorAll('[data-delete-cancelled]').forEach(btn => {
+      btn.addEventListener('click', () => deleteCancelledOrder(btn.dataset.deleteCancelled, btn.dataset.orderNumber, btn));
+    });
+  }
+
+  async function deleteCancelledOrder(orderId, orderNumber, button) {
+    const confirmed = window.confirm(`Permanently delete ${orderNumber}? This removes the cancelled order and its uploaded documents. This cannot be undone. Paid orders cannot be deleted.`);
+    if (!confirmed) return;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Deleting…';
+    try {
+      const { data, error } = await client.functions.invoke('delete-cancelled-order', {
+        body: { order_id: orderId }
+      });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Could not delete this order.');
+      orders = orders.filter(order => order.id !== orderId);
+      renderOrders();
+      alert(`${orderNumber} was deleted. ${Number(data.deleted_files || 0)} uploaded document(s) removed.`);
+    } catch (error) {
+      console.error('Cancelled order deletion failed:', error);
+      alert('Could not delete this order: ' + (error.message || 'Unknown error'));
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }
 
   async function openOrderFiles(orderId, button) {
