@@ -36,7 +36,9 @@
       <a href="about.html">About</a>
       <a href="gallery.html">Gallery</a>
       <a href="contact.html">Contact</a>
-    </nav>
+    
+      <a href="print-online.html">Print Online</a>
+      <a href="track-order.html">Track Order</a></nav>
 
     <div class="nav-actions">
       <a href="print-online.html" class="nav-print">
@@ -705,6 +707,13 @@
           const result = await response.json().catch(()=>({}));
           if (!response.ok || !result.success) throw new Error(readableError(result.error ?? result, `Your order could not be submitted (HTTP ${response.status}). Please try again.`));
           message.textContent=`Payment request submitted! Reference ID: ${result.requestId}. Amount: ${money(result.estimatedTotal)}. ${result.totalSheets} physical sheet(s). Your request is pending manual payment verification.`;
+          const trackingLink = document.createElement("a");
+          trackingLink.href = "track-order.html";
+          trackingLink.textContent = "Track your order status →";
+          trackingLink.className = "order-tracking-success-link";
+          trackingLink.style.cssText = "display:inline-block;margin-top:12px;color:#9a702b;font-weight:800;text-decoration:underline;";
+          message.appendChild(document.createElement("br"));
+          message.appendChild(trackingLink);
           message.className="order-form-message success"; button.textContent="Request submitted ✓"; form.reset(); $("clearFiles").click();
         } catch (error) { message.textContent=readableError(error,"Your order could not be submitted. Please try again."); message.className="order-form-message error"; button.disabled=false; button.innerHTML='Submit for payment verification <span>↗</span>'; }
       });
