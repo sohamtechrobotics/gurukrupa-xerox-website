@@ -1192,7 +1192,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ].join("\n");
 
       const whatsappURL =
-        "https://wa.me/917745062299?text=" +
+        "https://wa.me/919890715138?text=" +
         encodeURIComponent(whatsappMessage);
 
       window.open(whatsappURL, "_blank", "noopener,noreferrer");
@@ -1200,3 +1200,37 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
+
+
+/* FINAL SITE-WIDE THEME CONTROL */
+(function () {
+  var root = document.documentElement;
+  function setTheme(mode) {
+    var next = mode === "dark" ? "dark" : "light";
+    root.setAttribute("data-theme", next);
+    document.querySelectorAll(".theme-toggle").forEach(function (btn) {
+      var icon = btn.querySelector(".theme-toggle-icon");
+      if (icon) icon.textContent = next === "dark" ? "☀" : "☾";
+      btn.setAttribute("aria-label", next === "dark" ? "Switch to light mode" : "Switch to dark mode");
+      btn.setAttribute("title", next === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    });
+  }
+  var initial = "light";
+  try { initial = localStorage.getItem("gurukrupa-theme") || "light"; } catch (e) {}
+  setTheme(initial);
+  function attach() {
+    document.querySelectorAll(".theme-toggle").forEach(function (btn) {
+      if (btn.getAttribute("data-theme-listener") === "yes") return;
+      btn.setAttribute("data-theme-listener", "yes");
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        setTheme(next);
+        try { localStorage.setItem("gurukrupa-theme", next); } catch (e) {}
+      });
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", attach);
+  else attach();
+})();
